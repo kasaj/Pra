@@ -18,7 +18,7 @@
     },
     {
       "type": "pohyb",
-      "emoji": "🚶",
+      "emoji": "🏃‍♂️",
       "durationMinutes": 30,
       "cs": {
         "name": "Pohyb",
@@ -51,7 +51,7 @@
       "emoji": "📜",
       "durationMinutes": null,
       "cs": {
-        "name": "Komentář.",
+        "name": "Komentář",
         "description": "Reflexe, záměr, slovo nebo věta která provede dnem"
       },
       "en": {
@@ -64,7 +64,7 @@
       "emoji": "🤗",
       "durationMinutes": null,
       "cs": {
-        "name": "Objetí nebo kontakt",
+        "name": "Objetí",
         "description": "Vědomý kontakt s druhým člověkem"
       },
       "en": {
