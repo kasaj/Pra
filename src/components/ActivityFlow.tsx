@@ -1,0 +1,245 @@
+import { useState, useRef } from 'react';
+import { Activity, ActivityDefinition, Rating } from '../types';
+import { useLanguage } from '../i18n';
+import { generateId, addActivity } from '../utils/storage';
+import StarRating from './StarRating';
+import Timer from './Timer';
+
+type TimedFlowStep = 'rating-before' | 'timer' | 'rating-after';
+
+interface ActivityFlowProps {
+  activity: ActivityDefinition;
+  onClose: () => void;
+}
+
+export default function ActivityFlow({ activity, onClose }: ActivityFlowProps) {
+  const { t } = useLanguage();
+  const isTimed = activity.durationMinutes !== null;
+
+  const [timedStep, setTimedStep] = useState<TimedFlowStep>('rating-before');
+  const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
+  const [ratingBefore, setRatingBefore] = useState<Rating | null>(null);
+  const [ratingAfter, setRatingAfter] = useState<Rating | null>(null);
+  const [noteBefore, setNoteBefore] = useState('');
+  const [noteAfter, setNoteAfter] = useState('');
+
+  const [rating, setRating] = useState<Rating | null>(null);
+  const [note, setNote] = useState('');
+
+  const [startedAt] = useState(new Date().toISOString());
+  const actualDurationRef = useRef<number>(0);
+
+  const handleTimedBeforeSubmit = () => {
+    setTimedStep('timer');
+  };
+
+  const handleTimerComplete = (elapsedSeconds: number) => {
+    actualDurationRef.current = elapsedSeconds;
+    setTimedStep('rating-after');
+  };
+
+  const handleTimedAfterSubmit = () => {
+    const newActivity: Activity = {
+      id: generateId(),
+      type: activity.type,
+      startedAt,
+      completedAt: new Date().toISOString(),
+      durationMinutes: activity.durationMinutes,
+      actualDurationSeconds: actualDurationRef.current,
+      selectedVariant: selectedVariant || undefined,
+      ratingBefore: ratingBefore || undefined,
+      ratingAfter: ratingAfter || undefined,
+      noteBefore: noteBefore || undefined,
+      noteAfter: noteAfter || undefined,
+    };
+
+    addActivity(newActivity);
+    onClose();
+  };
+
+  const handleUntimedSubmit = () => {
+    const newActivity: Activity = {
+      id: generateId(),
+      type: activity.type,
+      startedAt,
+      completedAt: new Date().toISOString(),
+      durationMinutes: null,
+      selectedVariant: selectedVariant || undefined,
+      rating: rating || undefined,
+      note: note || undefined,
+    };
+
+    addActivity(newActivity);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-cream-50 z-50 flex flex-col">
+      <div className="p-4 border-b border-clay-200">
+        <div className="max-w-md mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">{activity.emoji}</span>
+            <h2 className="font-serif text-xl text-clay-800">{activity.name}</h2>
+          </div>
+          <button onClick={onClose} className="text-clay-400 hover:text-clay-600 p-2">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-auto">
+        <div className="max-w-md mx-auto p-4">
+          {/* Nečasové aktivity - vše na jedné obrazovce */}
+          {!isTimed && (
+            <div className="space-y-6 py-6">
+              <p className="text-center text-clay-600 leading-relaxed">
+                {activity.description}
+              </p>
+
+              {activity.variants && activity.variants.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="font-serif text-sm text-clay-500 text-center">
+                    {t.flow.optional}
+                  </h3>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {activity.variants.map((variant) => (
+                      <button
+                        key={variant}
+                        onClick={() => setSelectedVariant(selectedVariant === variant ? null : variant)}
+                        className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
+                          selectedVariant === variant
+                            ? 'bg-forest-100 border-forest-400 text-forest-700'
+                            : 'bg-cream-100 border-clay-200 text-clay-600 hover:border-clay-300'
+                        }`}
+                      >
+                        {variant}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-6 pt-4">
+                <div className="space-y-3">
+                  <h3 className="font-serif text-sm text-clay-500 text-center">
+                    {t.flow.ratingOptional}
+                  </h3>
+                  <div className="flex justify-center">
+                    <StarRating value={rating} onChange={setRating} size="lg" />
+                  </div>
+                </div>
+
+                <textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder={t.flow.notePlaceholder}
+                  className="w-full p-4 rounded-xl bg-cream-100 border border-clay-200
+                           focus:outline-none focus:border-forest-400 resize-none h-20
+                           text-clay-800 placeholder:text-clay-400"
+                />
+
+                <button onClick={handleUntimedSubmit} className="btn-primary w-full">
+                  {t.flow.record}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Časové aktivity - před (s popisem a variantami) */}
+          {isTimed && timedStep === 'rating-before' && (
+            <div className="space-y-6 py-6">
+              <p className="text-center text-clay-600 leading-relaxed">
+                {activity.description}
+              </p>
+
+              {activity.variants && activity.variants.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="font-serif text-sm text-clay-500 text-center">
+                    {t.flow.optional}
+                  </h3>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {activity.variants.map((variant) => (
+                      <button
+                        key={variant}
+                        onClick={() => setSelectedVariant(selectedVariant === variant ? null : variant)}
+                        className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
+                          selectedVariant === variant
+                            ? 'bg-forest-100 border-forest-400 text-forest-700'
+                            : 'bg-cream-100 border-clay-200 text-clay-600 hover:border-clay-300'
+                        }`}
+                      >
+                        {variant}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-4 space-y-4">
+                <h3 className="font-serif text-lg text-clay-700 text-center">
+                  {t.flow.howFeelNow}
+                </h3>
+                <p className="text-center text-clay-500 text-sm">{t.flow.optional}</p>
+
+                <div className="flex justify-center py-2">
+                  <StarRating value={ratingBefore} onChange={setRatingBefore} size="lg" />
+                </div>
+
+                <textarea
+                  value={noteBefore}
+                  onChange={(e) => setNoteBefore(e.target.value)}
+                  placeholder={t.flow.notePlaceholder}
+                  className="w-full p-4 rounded-xl bg-cream-100 border border-clay-200
+                           focus:outline-none focus:border-forest-400 resize-none h-20
+                           text-clay-800 placeholder:text-clay-400"
+                />
+
+                <button onClick={handleTimedBeforeSubmit} className="btn-primary w-full">
+                  {t.flow.start} ({activity.durationMinutes} min)
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Časové aktivity - timer */}
+          {isTimed && timedStep === 'timer' && activity.durationMinutes && (
+            <Timer
+              durationMinutes={activity.durationMinutes}
+              onComplete={handleTimerComplete}
+              onCancel={onClose}
+            />
+          )}
+
+          {/* Časové aktivity - po */}
+          {isTimed && timedStep === 'rating-after' && (
+            <div className="space-y-6 py-8">
+              <h3 className="font-serif text-2xl text-clay-800 text-center">
+                {t.flow.whatShifted}
+              </h3>
+              <p className="text-center text-clay-500 text-sm">{t.flow.optional}</p>
+
+              <div className="flex justify-center py-4">
+                <StarRating value={ratingAfter} onChange={setRatingAfter} size="lg" />
+              </div>
+
+              <textarea
+                value={noteAfter}
+                onChange={(e) => setNoteAfter(e.target.value)}
+                placeholder={t.flow.notePlaceholder}
+                className="w-full p-4 rounded-xl bg-cream-100 border border-clay-200
+                         focus:outline-none focus:border-forest-400 resize-none h-20
+                         text-clay-800 placeholder:text-clay-400"
+              />
+
+              <button onClick={handleTimedAfterSubmit} className="btn-primary w-full">
+                {t.flow.finish}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

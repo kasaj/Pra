@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-cream-50 text-clay-900 min-h-screen;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: Georgia, Cambria, 'Times New Roman', serif;
+  }
+}
+
+@layer components {
+  .page-container {
+    @apply max-w-md mx-auto px-4 pb-24 pt-6;
+  }
+
+  .card {
+    @apply bg-cream-100 rounded-2xl p-4 shadow-sm;
+  }
+
+  .btn-primary {
+    @apply bg-forest-600 text-cream-50 px-6 py-3 rounded-xl
+           hover:bg-forest-700 transition-colors;
+  }
+
+  .nav-item {
+    @apply flex-1 py-3 text-center text-sm font-medium
+           text-clay-500 transition-colors;
+  }
+
+  .nav-item-active {
+    @apply text-forest-700;
+  }
+}
