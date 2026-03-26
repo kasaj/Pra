@@ -158,10 +158,26 @@ export default function PageTime() {
 
     const toHM = (s: number) => ({ hours: Math.floor(s / 3600), minutes: Math.floor((s % 3600) / 60) });
 
+    // Days since first activity
+    const firstDate = data.length > 0 ? data[data.length - 1].date : null;
+    let activeDays = 0;
+    if (firstDate) {
+      const first = new Date(firstDate);
+      const now = new Date();
+      activeDays = Math.floor((now.getTime() - first.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    }
+
+    // Practice ratio vs waking hours (16h/day = 6:00-22:00)
+    const wakingSeconds = activeDays * 16 * 3600;
+    const practicePercent = wakingSeconds > 0
+      ? Math.round((totalSeconds / wakingSeconds) * 1000) / 10
+      : 0;
+
     return {
-      totalActivities, ...toHM(totalSeconds),
+      totalActivities, totalSeconds, ...toHM(totalSeconds),
       todayActivities, today: toHM(todaySeconds),
       weekActivities, week: toHM(weekSeconds),
+      activeDays, practicePercent,
     };
   }, [data]);
 
@@ -320,6 +336,14 @@ export default function PageTime() {
               {summaryStats.minutes} {t.time.minutes}
             </div>
             <div className="text-xs text-clay-500 mt-1">{t.time.totalTime}</div>
+          </div>
+          <div className="card text-center py-3">
+            <div className="text-2xl font-serif text-forest-600">{summaryStats.activeDays}</div>
+            <div className="text-xs text-clay-500 mt-1">{t.time.activeDays}</div>
+          </div>
+          <div className="card text-center py-3">
+            <div className="text-2xl font-serif text-forest-600">{summaryStats.practicePercent}%</div>
+            <div className="text-xs text-clay-500 mt-1">{t.time.practiceRatio}</div>
           </div>
         </div>
       </section>
