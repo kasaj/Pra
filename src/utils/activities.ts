@@ -1,6 +1,7 @@
 import { ActivityDefinition, ActivityType } from '../types';
 import { Translations } from '../i18n/translations';
 import { translations } from '../i18n/translations';
+import { getCachedConfig } from './config';
 
 const ACTIVITIES_STORAGE_KEY = 'pra_activities';
 
@@ -116,7 +117,7 @@ export const DEFAULT_ACTIVITIES: ActivityDefinition[] = [
   // Nečasové aktivity
   {
     type: 'komentar',
-    name: 'Komentář.',
+    name: 'Komentář',
     emoji: '📜',
     description: 'Reflexe, záměr, slovo nebo věta která provede dnem',
     durationMinutes: null,
@@ -137,6 +138,23 @@ export const DEFAULT_ACTIVITIES: ActivityDefinition[] = [
   },
 ];
 
+const getDefaultFromConfig = (lang?: string): ActivityDefinition[] => {
+  const config = getCachedConfig();
+  if (!config?.activities?.length) return [...DEFAULT_ACTIVITIES];
+  const l = lang || (localStorage.getItem('pra_language') === 'en' ? 'en' : 'cs');
+  return config.activities.map((item) => {
+    const localized = l === 'en' ? item.en : item.cs;
+    return {
+      type: item.type as ActivityType,
+      emoji: item.emoji,
+      durationMinutes: item.durationMinutes,
+      name: localized.name,
+      description: localized.description,
+      variants: localized.variants,
+    };
+  });
+};
+
 export const loadActivities = (): ActivityDefinition[] => {
   try {
     const stored = localStorage.getItem(ACTIVITIES_STORAGE_KEY);
@@ -146,7 +164,7 @@ export const loadActivities = (): ActivityDefinition[] => {
   } catch {
     // Při chybě vrátíme výchozí
   }
-  return [...DEFAULT_ACTIVITIES];
+  return getDefaultFromConfig();
 };
 
 export const saveActivities = (activities: ActivityDefinition[]): void => {

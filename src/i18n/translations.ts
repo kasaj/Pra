@@ -116,7 +116,7 @@ export const translations = {
       sobe: { name: 'Zastavení', desc: 'Na pár minut se zastavit, vnímat, pobýt sám se sebou', variants: ['Dýchání', 'Sken těla', 'Tiché zastavení'] },
       pohyb: { name: 'Pohyb', desc: 'Protažení, procvičení, posilování, sport nebo chůze s vnímáním těla', variants: ['Chůze', 'Protažení', 'Posilování', 'Jóga', 'Tanec'] },
       rozjimani: { name: 'Rozjímání', desc: 'Tiché sezení, otevřená otázka, vnitřní prostor, pozorování přírody, pocitů, myšlenek', variants: ['Tiché sezení', 'Kontemplace', 'Journaling', 'Vděčnost'] },
-      komentar: { name: 'Komentář.', desc: 'Reflexe, záměr, slovo nebo věta která provede dnem' },
+      komentar: { name: 'Komentář', desc: 'Reflexe, záměr, slovo nebo věta která provede dnem' },
       objeti: { name: 'Objetí nebo kontakt', desc: 'Vědomý kontakt s druhým člověkem' },
       vyzva: { name: 'Výzva', desc: 'Vědomé čelení tomu, čemu se vyhýbám. Jediná konkrétní akce uprostřed nepřehlednosti.' },
     },
