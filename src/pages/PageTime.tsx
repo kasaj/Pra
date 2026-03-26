@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import { loadAllData, deleteActivitiesByIds } from '../utils/storage';
 import { getActivityByType, getTranslatedActivity } from '../utils/activities';
 import { useLanguage } from '../i18n';
@@ -123,6 +123,13 @@ export default function PageTime() {
   const [data, setData] = useState(() => loadAllData());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [trendRange, setTrendRange] = useState<'week' | 'month'>('week');
+  const [now, setNow] = useState(() => Date.now());
+
+  // Tick every second for elapsed clock
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Summary statistics
   const summaryStats = useMemo(() => {
@@ -158,28 +165,35 @@ export default function PageTime() {
 
     const toHM = (s: number) => ({ hours: Math.floor(s / 3600), minutes: Math.floor((s % 3600) / 60) });
 
-    // Days since first activity
+    // First activity date for elapsed clock
     const firstDate = data.length > 0 ? data[data.length - 1].date : null;
-    let activeDays = 0;
-    if (firstDate) {
-      const first = new Date(firstDate);
-      const now = new Date();
-      activeDays = Math.floor((now.getTime() - first.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-    }
-
-    // Practice ratio vs waking hours (16h/day = 6:00-22:00)
-    const wakingSeconds = activeDays * 16 * 3600;
-    const practicePercent = wakingSeconds > 0
-      ? Math.round((totalSeconds / wakingSeconds) * 1000) / 10
-      : 0;
 
     return {
       totalActivities, totalSeconds, ...toHM(totalSeconds),
       todayActivities, today: toHM(todaySeconds),
       weekActivities, week: toHM(weekSeconds),
-      activeDays, practicePercent,
+      firstDate,
     };
   }, [data]);
+
+  // Elapsed time since first activity (ticking)
+  const elapsed = useMemo(() => {
+    if (!summaryStats.firstDate) return { display: '0:00:00:00', percent: '0' };
+    const firstMs = new Date(summaryStats.firstDate).getTime();
+    const diffSec = Math.floor((now - firstMs) / 1000);
+    const days = Math.floor(diffSec / 86400);
+    const hrs = Math.floor((diffSec % 86400) / 3600);
+    const mins = Math.floor((diffSec % 3600) / 60);
+    const secs = diffSec % 60;
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const display = `${days}:${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+    // Practice % of waking hours (16h/day)
+    const wakingSec = (days + 1) * 16 * 3600;
+    const percent = wakingSec > 0
+      ? (summaryStats.totalSeconds / wakingSec * 100).toFixed(1)
+      : '0';
+    return { display, percent };
+  }, [summaryStats.firstDate, summaryStats.totalSeconds, now]);
 
   // Trend data (week or month)
   const trendData = useMemo(() => {
@@ -338,11 +352,11 @@ export default function PageTime() {
             <div className="text-xs text-clay-500 mt-1">{t.time.totalTime}</div>
           </div>
           <div className="card text-center py-3">
-            <div className="text-2xl font-serif text-forest-600">{summaryStats.activeDays}</div>
+            <div className="text-xl font-mono text-forest-600 tracking-wider">{elapsed.display}</div>
             <div className="text-xs text-clay-500 mt-1">{t.time.activeDays}</div>
           </div>
           <div className="card text-center py-3">
-            <div className="text-2xl font-serif text-forest-600">{summaryStats.practicePercent}%</div>
+            <div className="text-2xl font-serif text-forest-600">{elapsed.percent}%</div>
             <div className="text-xs text-clay-500 mt-1">{t.time.practiceRatio}</div>
           </div>
         </div>

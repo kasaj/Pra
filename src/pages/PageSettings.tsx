@@ -109,9 +109,30 @@ function generateHistoryMarkdown(data: DayEntry[], lang: string): string {
   const activitiesLabel = lang === 'cs' ? 'aktivit' : 'activities';
   const timeLabel = lang === 'cs' ? 'čas' : 'time';
 
+  // Elapsed time since first activity
+  const firstDate = data.length > 0 ? data[data.length - 1].date : null;
+  let elapsedStr = '-';
+  let practicePercent = '0';
+  if (firstDate) {
+    const diffSec = Math.floor((Date.now() - new Date(firstDate).getTime()) / 1000);
+    const days = Math.floor(diffSec / 86400);
+    const hrs = Math.floor((diffSec % 86400) / 3600);
+    const mins = Math.floor((diffSec % 3600) / 60);
+    const secs = diffSec % 60;
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    elapsedStr = `${days}:${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+    const wakingSec = (days + 1) * 16 * 3600;
+    if (wakingSec > 0) practicePercent = (totalSeconds / wakingSec * 100).toFixed(1);
+  }
+
+  const runningLabel = lang === 'cs' ? 'Doba běhu' : 'Running time';
+  const practiceLabel = lang === 'cs' ? 'Praxe z bdělého stavu' : 'Practice of waking time';
+
   // Summary section
   md += `## ${t.summary}\n\n`;
   md += `| | |\n|---|---|\n`;
+  md += `| **${runningLabel}** | ${elapsedStr} |\n`;
+  md += `| **${practiceLabel}** | ${practicePercent}% |\n`;
   md += `| **${weekLabel} ${activitiesLabel}** | ${weekActivities} |\n`;
   md += `| **${weekLabel} ${timeLabel}** | ${fmtTime(weekHM)} |\n`;
   md += `| **${t.totalActivities}** | ${totalActivities} |\n`;
