@@ -3,16 +3,16 @@
   "activities": [
     {
       "type": "sobe",
-      "emoji": "🌬️",
+      "emoji": "⏸️",
       "durationMinutes": 3,
       "cs": {
         "name": "Zastavení",
-        "description": "Na 3 minutky se zastavit, vnímat, pobýt sám se sebou",
+        "description": "Na pár minut se zastavit, vnímat, pobýt sám se sebou",
         "variants": ["Dýchání", "Sken těla", "Tiché zastavení"]
       },
       "en": {
         "name": "Pause",
-        "description": "Stop for 3 minutes, observe, be present with yourself",
+        "description": "Stop for a few minutes, observe, be present with yourself",
         "variants": ["Breathing", "Body scan", "Silent pause"]
       }
     },

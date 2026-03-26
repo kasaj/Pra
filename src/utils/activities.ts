@@ -1,5 +1,6 @@
 import { ActivityDefinition, ActivityType } from '../types';
 import { Translations } from '../i18n/translations';
+import { translations } from '../i18n/translations';
 
 const ACTIVITIES_STORAGE_KEY = 'pra_activities';
 
@@ -50,12 +51,28 @@ const getCanonicalType = (type: string): string => {
   return TRANSLATABLE_TYPES.find(t => t.toLowerCase() === normalizedType) || type;
 };
 
+// Check if activity name/description were customized by the user
+const isCustomized = (activity: ActivityDefinition): boolean => {
+  if (!isTranslatableType(activity.type)) return true;
+  const canonicalType = getCanonicalType(activity.type) as keyof typeof translations.cs.activities;
+  const csTrans = translations.cs.activities[canonicalType];
+  const enTrans = translations.en.activities[canonicalType];
+  if (!csTrans || !enTrans) return true;
+  // If name matches neither CS nor EN default, user has customized it
+  const isDefaultName = activity.name === csTrans.name || activity.name === enTrans.name;
+  return !isDefaultName;
+};
+
 // Get translated activity (for display purposes)
 export const getTranslatedActivity = (
   activity: ActivityDefinition,
   t: Translations
 ): ActivityDefinition => {
   if (!isTranslatableType(activity.type)) {
+    return activity;
+  }
+  // If user has customized the name, don't override with translation
+  if (isCustomized(activity)) {
     return activity;
   }
   const canonicalType = getCanonicalType(activity.type);
