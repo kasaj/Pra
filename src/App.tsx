@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Page } from './types';
 import { LanguageProvider } from './i18n';
 import Navigation from './components/Navigation';
@@ -6,6 +6,7 @@ import PageToday from './pages/PageToday';
 import PageTime from './pages/PageTime';
 import PageInfo from './pages/PageInfo';
 import PageSettings from './pages/PageSettings';
+import { loadConfig } from './utils/config';
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState<Page>('today');
@@ -25,6 +26,14 @@ function AppContent() {
 }
 
 function App() {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    loadConfig().then(() => setReady(true));
+  }, []);
+
+  if (!ready) return null;
+
   return (
     <LanguageProvider>
       <AppContent />

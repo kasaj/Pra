@@ -1,51 +1,86 @@
 import { useLanguage } from '../i18n';
+import { getCachedConfig, ConfigInfo } from '../utils/config';
 
 export default function PageInfo() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
+
+  // Config overrides translations - missing fields are skipped
+  const config = getCachedConfig();
+  const cfgInfo: ConfigInfo = config?.info?.[language] || {};
+
+  // Use config value if present, otherwise fall back to translation
+  const info = {
+    title: cfgInfo.title || t.info.title,
+    subtitle: cfgInfo.subtitle || t.info.subtitle,
+    intro1: cfgInfo.intro1,
+    intro2: cfgInfo.intro2 || t.info.intro2,
+    sequence: cfgInfo.sequence || t.info.sequence,
+    intro3: cfgInfo.intro3 || t.info.intro3,
+    bioTitle: cfgInfo.bioTitle || t.info.bioTitle,
+    bioText: cfgInfo.bioText || t.info.bioText,
+    psychTitle: cfgInfo.psychTitle || t.info.psychTitle,
+    psychText: cfgInfo.psychText || t.info.psychText,
+    philoTitle: cfgInfo.philoTitle || t.info.philoTitle,
+    philoText: cfgInfo.philoText || t.info.philoText,
+  };
 
   return (
     <div className="page-container">
       <header className="mb-8">
-        <h1 className="font-serif text-3xl text-clay-800">{t.info.title}</h1>
-        <p className="text-clay-500 mt-2">{t.info.subtitle}</p>
+        <h1 className="font-serif text-3xl text-clay-800">{info.title}</h1>
+        <p className="text-clay-500 mt-2">{info.subtitle}</p>
       </header>
 
       <div className="space-y-6 text-clay-700 leading-relaxed">
-        <section className="card">
-          <p>{t.info.intro1}</p>
-        </section>
+        {info.intro1 && (
+          <section className="card">
+            <p>{info.intro1}</p>
+          </section>
+        )}
 
-        <section className="card">
-          <p>{t.info.intro2}</p>
-          <p className="font-serif text-lg text-clay-800 mt-4 text-center">
-            {t.info.sequence}
-          </p>
-        </section>
+        {info.intro2 && (
+          <section className="card">
+            <p>{info.intro2}</p>
+            {info.sequence && (
+              <p className="font-serif text-lg text-clay-800 mt-4 text-center">
+                {info.sequence}
+              </p>
+            )}
+          </section>
+        )}
 
-        <section className="card">
-          <p>{t.info.intro3}</p>
-        </section>
+        {info.intro3 && (
+          <section className="card">
+            <p>{info.intro3}</p>
+          </section>
+        )}
 
-        <section>
-          <h2 className="font-serif text-xl text-clay-800 mb-3">{t.info.bioTitle}</h2>
-          <div className="card">
-            <p>{t.info.bioText}</p>
-          </div>
-        </section>
+        {info.bioTitle && info.bioText && (
+          <section>
+            <h2 className="font-serif text-xl text-clay-800 mb-3">{info.bioTitle}</h2>
+            <div className="card">
+              <p>{info.bioText}</p>
+            </div>
+          </section>
+        )}
 
-        <section>
-          <h2 className="font-serif text-xl text-clay-800 mb-3">{t.info.psychTitle}</h2>
-          <div className="card">
-            <p>{t.info.psychText}</p>
-          </div>
-        </section>
+        {info.psychTitle && info.psychText && (
+          <section>
+            <h2 className="font-serif text-xl text-clay-800 mb-3">{info.psychTitle}</h2>
+            <div className="card">
+              <p>{info.psychText}</p>
+            </div>
+          </section>
+        )}
 
-        <section>
-          <h2 className="font-serif text-xl text-clay-800 mb-3">{t.info.philoTitle}</h2>
-          <div className="card">
-            <p>{t.info.philoText}</p>
-          </div>
-        </section>
+        {info.philoTitle && info.philoText && (
+          <section>
+            <h2 className="font-serif text-xl text-clay-800 mb-3">{info.philoTitle}</h2>
+            <div className="card">
+              <p>{info.philoText}</p>
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
