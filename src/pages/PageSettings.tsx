@@ -451,6 +451,19 @@ export default function PageSettings() {
           </div>
         </section>
 
+        {/* Install */}
+        <section className="card">
+          <h2 className="font-serif text-lg text-clay-800 mb-3">
+            {t.settings.installTitle}
+          </h2>
+          <div className="space-y-2 text-sm text-clay-600">
+            <p>{t.settings.installStep1}</p>
+            <p>{t.settings.installStep2iOS}</p>
+            <p>{t.settings.installStep2Android}</p>
+            <p className="text-clay-500 italic mt-2">{t.settings.installNote}</p>
+          </div>
+        </section>
+
         {/* Jazyk */}
         <section className="card">
           <h2 className="font-serif text-lg text-clay-800 mb-4">
