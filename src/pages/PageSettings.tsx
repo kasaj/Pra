@@ -54,7 +54,7 @@ function generateHistoryMarkdown(data: DayEntry[], lang: string): string {
   data.forEach((day) => {
     day.activities.forEach((activity) => {
       totalActivities++;
-      const secs = activity.actualDurationSeconds || (activity.durationMinutes ? activity.durationMinutes * 60 : 0);
+      const secs = activity.actualDurationSeconds || (activity.durationMinutes ? activity.durationMinutes * 60 : 60);
       totalSeconds += secs;
       if (activity.ratingAfter) ratings.push(activity.ratingAfter);
       else if (activity.rating) ratings.push(activity.rating);
@@ -166,7 +166,7 @@ function generateHistoryMarkdown(data: DayEntry[], lang: string): string {
         ? formatDuration(activity.actualDurationSeconds)
         : activity.durationMinutes
           ? `${activity.durationMinutes}m`
-          : '-';
+          : '1m';
 
       let rating = '-';
       if (isTimed) {

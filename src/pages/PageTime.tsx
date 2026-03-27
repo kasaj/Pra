@@ -149,7 +149,7 @@ export default function PageTime() {
     data.forEach((day) => {
       day.activities.forEach((activity) => {
         totalActivities++;
-        const secs = activity.actualDurationSeconds || (activity.durationMinutes ? activity.durationMinutes * 60 : 0);
+        const secs = activity.actualDurationSeconds || (activity.durationMinutes ? activity.durationMinutes * 60 : 60);
         totalSeconds += secs;
 
         if (day.date === todayStr) {
