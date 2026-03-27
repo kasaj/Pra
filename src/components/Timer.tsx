@@ -1,52 +1,24 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useLanguage } from '../i18n';
 
-// Singleton AudioContext - initialized on first user interaction
-let audioContext: AudioContext | null = null;
-
-function getAudioContext(): AudioContext | null {
-  if (!audioContext) {
-    try {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      audioContext = new AudioContextClass();
-    } catch {
-      return null;
-    }
-  }
-  return audioContext;
+function getGongUrl(): string {
+  const path = window.location.pathname;
+  const base = path.endsWith('/') ? path : path.substring(0, path.lastIndexOf('/') + 1);
+  return `${base}gong.mp3`;
 }
 
+let gongAudio: HTMLAudioElement | null = null;
+
 function playChime() {
-  const ctx = getAudioContext();
-  if (!ctx) return;
-
-  // Resume if suspended (browser policy)
-  if (ctx.state === 'suspended') {
-    ctx.resume();
+  try {
+    if (!gongAudio) {
+      gongAudio = new Audio(getGongUrl());
+    }
+    gongAudio.currentTime = 0;
+    gongAudio.play();
+  } catch {
+    // Silently fail if audio can't play
   }
-
-  const playTone = (frequency: number, delay: number, duration: number) => {
-    const oscillator = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(ctx.destination);
-
-    oscillator.frequency.value = frequency;
-    oscillator.type = 'sine';
-
-    const startTime = ctx.currentTime + delay;
-    gainNode.gain.setValueAtTime(0, startTime);
-    gainNode.gain.linearRampToValueAtTime(0.4, startTime + 0.02);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-
-    oscillator.start(startTime);
-    oscillator.stop(startTime + duration);
-  };
-
-  // Two-tone gentle chime
-  playTone(880, 0, 0.5);
-  playTone(1175, 0.2, 0.6);
 }
 
 interface TimerProps {
@@ -63,11 +35,6 @@ export default function Timer({ durationMinutes, onComplete, onCancel }: TimerPr
   const [isPausedByVisibility, setIsPausedByVisibility] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const elapsedRef = useRef(0);
-
-  // Initialize AudioContext on mount (user already clicked to start timer)
-  useEffect(() => {
-    getAudioContext();
-  }, []);
 
   useEffect(() => {
     const handleVisibilityChange = () => {

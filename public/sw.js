@@ -1,10 +1,11 @@
-const CACHE_NAME = 'pra-v2';
+const CACHE_NAME = 'pra-v3';
 const BASE_PATH = '/pra';
 
 const ASSETS_TO_CACHE = [
   `${BASE_PATH}/`,
   `${BASE_PATH}/index.html`,
   `${BASE_PATH}/logo.png`,
+  `${BASE_PATH}/gong.mp3`,
   `${BASE_PATH}/manifest.json`
 ];
 
