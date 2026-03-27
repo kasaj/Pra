@@ -160,8 +160,28 @@ function generatePraFileContent(data: PraFile): string {
   return lines.join('\n');
 }
 
-function downloadFile(content: string, filename: string, mimeType = 'text/markdown;charset=utf-8') {
-  const blob = new Blob([content], { type: mimeType });
+async function downloadFile(content: string, filename: string, mimeType = 'application/json') {
+  // Try File System Access API (Save As dialog) - Chrome/Edge
+  if ('showSaveFilePicker' in window) {
+    try {
+      const handle = await (window as unknown as { showSaveFilePicker: (opts: unknown) => Promise<FileSystemFileHandle> }).showSaveFilePicker({
+        suggestedName: filename,
+        types: [{
+          description: 'JSON file',
+          accept: { 'application/json': ['.json'] },
+        }],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(content);
+      await writable.close();
+      return;
+    } catch (e) {
+      // User cancelled or API failed - fall through to legacy
+      if ((e as Error).name === 'AbortError') return;
+    }
+  }
+  // Fallback: direct download
+  const blob = new Blob([content], { type: `${mimeType};charset=utf-8` });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
