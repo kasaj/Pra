@@ -217,29 +217,20 @@ export default function PageTime() {
     const result: Array<{ day: string; avgRating: number; count: number }> = [];
 
     if (trendRange === 'day') {
-      // Today's activities by hour
+      // Today's activities individually (or last day with data)
       const todayStr = new Date().toISOString().split('T')[0];
-      const dayEntry = data.find((d) => d.date === todayStr);
-      for (let h = 6; h <= 22; h++) {
-        const label = `${h}:00`;
-        let avgRating = 0;
-        let count = 0;
-        if (dayEntry) {
-          const hourActivities = dayEntry.activities.filter((a) => {
-            const hour = new Date(a.startedAt).getHours();
-            return hour === h;
+      const dayEntry = data.find((d) => d.date === todayStr) || (data.length > 0 ? data[0] : null);
+      if (dayEntry) {
+        dayEntry.activities
+          .slice()
+          .sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime())
+          .forEach((a) => {
+            const time = new Date(a.startedAt).toLocaleTimeString(language === 'cs' ? 'cs-CZ' : 'en-US', { hour: '2-digit', minute: '2-digit' });
+            let rating = 0;
+            if (a.ratingAfter) rating = a.ratingAfter;
+            else if (a.rating) rating = a.rating;
+            result.push({ day: time, avgRating: rating, count: 1 });
           });
-          count = hourActivities.length;
-          const ratings: number[] = [];
-          hourActivities.forEach((a) => {
-            if (a.ratingAfter) ratings.push(a.ratingAfter);
-            else if (a.rating) ratings.push(a.rating);
-          });
-          if (ratings.length > 0) {
-            avgRating = Math.round((ratings.reduce((s, r) => s + r, 0) / ratings.length) * 10) / 10;
-          }
-        }
-        result.push({ day: label, avgRating, count });
       }
     } else {
       const today = new Date();
