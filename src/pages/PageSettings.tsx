@@ -51,6 +51,12 @@ function generateHistoryMarkdown(data: DayEntry[], lang: string): string {
   let weekActivities = 0;
   let weekSeconds = 0;
 
+  const monthAgoDate = new Date();
+  monthAgoDate.setDate(monthAgoDate.getDate() - 29);
+  const monthAgoStr = monthAgoDate.toISOString().split('T')[0];
+  let monthActivities = 0;
+  let monthSeconds = 0;
+
   data.forEach((day) => {
     day.activities.forEach((activity) => {
       totalActivities++;
@@ -63,12 +69,17 @@ function generateHistoryMarkdown(data: DayEntry[], lang: string): string {
         weekActivities++;
         weekSeconds += secs;
       }
+      if (day.date >= monthAgoStr) {
+        monthActivities++;
+        monthSeconds += secs;
+      }
     });
   });
 
   const toHM = (s: number) => ({ h: Math.floor(s / 3600), m: Math.floor((s % 3600) / 60) });
   const total = toHM(totalSeconds);
   const weekHM = toHM(weekSeconds);
+  const monthHM = toHM(monthSeconds);
   const avgRating = ratings.length > 0
     ? (ratings.reduce((sum, r) => sum + r, 0) / ratings.length).toFixed(1)
     : '-';
@@ -106,6 +117,7 @@ function generateHistoryMarkdown(data: DayEntry[], lang: string): string {
 
   const fmtTime = (hm: { h: number; m: number }) => `${hm.h > 0 ? `${hm.h}h ` : ''}${hm.m}min`;
   const weekLabel = lang === 'cs' ? 'Týden' : 'Week';
+  const monthLabel = lang === 'cs' ? 'Měsíc' : 'Month';
   const activitiesLabel = lang === 'cs' ? 'aktivit' : 'activities';
   const timeLabel = lang === 'cs' ? 'čas' : 'time';
 
@@ -135,6 +147,8 @@ function generateHistoryMarkdown(data: DayEntry[], lang: string): string {
   md += `| **${practiceLabel}** | ${practicePercent}% |\n`;
   md += `| **${weekLabel} ${activitiesLabel}** | ${weekActivities} |\n`;
   md += `| **${weekLabel} ${timeLabel}** | ${fmtTime(weekHM)} |\n`;
+  md += `| **${monthLabel} ${activitiesLabel}** | ${monthActivities} |\n`;
+  md += `| **${monthLabel} ${timeLabel}** | ${fmtTime(monthHM)} |\n`;
   md += `| **${t.totalActivities}** | ${totalActivities} |\n`;
   md += `| **${t.totalTime}** | ${fmtTime(total)} |\n`;
   md += `| **${t.avgRating}** | ${avgRating} |\n\n`;
