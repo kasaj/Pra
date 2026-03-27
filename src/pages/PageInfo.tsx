@@ -8,7 +8,6 @@ interface InfoNotes {
   why: string;
   how: string;
   what: string;
-  i: string;
 }
 
 function loadNotes(): InfoNotes {
@@ -16,7 +15,7 @@ function loadNotes(): InfoNotes {
     const stored = localStorage.getItem(NOTES_KEY);
     if (stored) return JSON.parse(stored);
   } catch { /* default */ }
-  return { why: '', how: '', what: '', i: '' };
+  return { why: '', how: '', what: '' };
 }
 
 function saveNotes(notes: InfoNotes): void {
@@ -42,17 +41,17 @@ export default function PageInfo() {
   const { language, t } = useLanguage();
   const [notes, setNotes] = useState<InfoNotes>(loadNotes);
 
-  // Config overrides translations - missing fields are skipped
   const config = getCachedConfig();
   const cfgInfo: ConfigInfo = config?.info?.[language] || {};
 
+  // New fields with fallback to legacy fields then translations
   const info = {
     title: cfgInfo.title || t.info.title,
     subtitle: cfgInfo.subtitle || t.info.subtitle,
-    intro1: cfgInfo.intro1,
-    intro2: cfgInfo.intro2 || t.info.intro2,
-    sequence: cfgInfo.sequence || t.info.sequence,
-    intro3: cfgInfo.intro3 || t.info.intro3,
+    intro: cfgInfo.intro || cfgInfo.intro1 || t.info.intro1,
+    why: cfgInfo.why || cfgInfo.intro2 || t.info.intro2,
+    how: cfgInfo.how || cfgInfo.sequence || t.info.sequence,
+    what: cfgInfo.what || cfgInfo.intro3?.split('\n\n')[0] || t.info.intro3,
     bioTitle: cfgInfo.bioTitle || t.info.bioTitle,
     bioText: cfgInfo.bioText || t.info.bioText,
     psychTitle: cfgInfo.psychTitle || t.info.psychTitle,
@@ -71,7 +70,7 @@ export default function PageInfo() {
     });
   }, []);
 
-  // Load notes from config on first run (if present)
+  // Load notes from config on first run
   useEffect(() => {
     const stored = localStorage.getItem(NOTES_KEY);
     if (!stored && cfgInfo) {
@@ -79,9 +78,8 @@ export default function PageInfo() {
         why: cfgInfo.noteWhy || '',
         how: cfgInfo.noteHow || '',
         what: cfgInfo.noteWhat || '',
-        i: cfgInfo.noteI || '',
       };
-      if (initial.why || initial.how || initial.what || initial.i) {
+      if (initial.why || initial.how || initial.what) {
         setNotes(initial);
         saveNotes(initial);
       }
@@ -96,57 +94,41 @@ export default function PageInfo() {
       </header>
 
       <div className="space-y-6 text-themed-secondary leading-relaxed">
-        {info.intro1 && (
+        {info.intro && (
           <section className="card">
-            <p>{info.intro1}</p>
+            <p>{info.intro}</p>
           </section>
         )}
 
-        {info.intro2 && (
+        {info.why && (
           <section>
             <h2 className="font-serif text-xl text-themed-primary mb-3">{language === 'cs' ? 'Proč' : 'Why'}</h2>
             <div className="card">
-              <p>{info.intro2}</p>
+              <p>{info.why}</p>
               <NoteField value={notes.why} onChange={(v) => updateNote('why', v)} placeholder={placeholder} />
             </div>
           </section>
         )}
 
-        {info.sequence && (
+        {info.how && (
           <section>
             <h2 className="font-serif text-xl text-themed-primary mb-3">{language === 'cs' ? 'Jak' : 'How'}</h2>
             <div className="card">
-              <p>{info.sequence}</p>
+              <p>{info.how}</p>
               <NoteField value={notes.how} onChange={(v) => updateNote('how', v)} placeholder={placeholder} />
             </div>
           </section>
         )}
 
-        {info.intro3 && (() => {
-          const parts = info.intro3.split('\n\n');
-          const whatText = parts[0];
-          const iText = parts.length > 1 ? parts.slice(1).join('\n\n') : null;
-          return (
-            <>
-              <section>
-                <h2 className="font-serif text-xl text-themed-primary mb-3">{language === 'cs' ? 'Co' : 'What'}</h2>
-                <div className="card">
-                  <p>{whatText}</p>
-                  <NoteField value={notes.what} onChange={(v) => updateNote('what', v)} placeholder={placeholder} />
-                </div>
-              </section>
-              {iText && (
-                <section>
-                  <h2 className="font-serif text-xl text-themed-primary mb-3">{language === 'cs' ? 'Já' : 'I'}</h2>
-                  <div className="card">
-                    <p>{iText}</p>
-                    <NoteField value={notes.i} onChange={(v) => updateNote('i', v)} placeholder={placeholder} />
-                  </div>
-                </section>
-              )}
-            </>
-          );
-        })()}
+        {info.what && (
+          <section>
+            <h2 className="font-serif text-xl text-themed-primary mb-3">{language === 'cs' ? 'Co' : 'What'}</h2>
+            <div className="card">
+              <p>{info.what}</p>
+              <NoteField value={notes.what} onChange={(v) => updateNote('what', v)} placeholder={placeholder} />
+            </div>
+          </section>
+        )}
 
         {info.bioTitle && info.bioText && (
           <section>

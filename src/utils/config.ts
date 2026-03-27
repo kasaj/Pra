@@ -1,10 +1,10 @@
 export interface ConfigInfo {
   title?: string;
   subtitle?: string;
-  intro1?: string;
-  intro2?: string;
-  sequence?: string;
-  intro3?: string;
+  intro?: string;
+  why?: string;
+  how?: string;
+  what?: string;
   bioTitle?: string;
   bioText?: string;
   psychTitle?: string;
@@ -14,7 +14,11 @@ export interface ConfigInfo {
   noteWhy?: string;
   noteHow?: string;
   noteWhat?: string;
-  noteI?: string;
+  // Legacy fields for backwards compat
+  intro1?: string;
+  intro2?: string;
+  sequence?: string;
+  intro3?: string;
 }
 
 export interface ConfigActivity {

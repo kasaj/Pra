@@ -212,33 +212,13 @@ interface ConfigActivity {
   en: { name: string; description: string; variants?: string[] };
 }
 
-interface ConfigInfoLang {
-  title?: string;
-  subtitle?: string;
-  intro1?: string;
-  intro2?: string;
-  sequence?: string;
-  intro3?: string;
-  bioTitle?: string;
-  bioText?: string;
-  psychTitle?: string;
-  psychText?: string;
-  philoTitle?: string;
-  philoText?: string;
-}
-
-interface ConfigInfo {
-  cs: ConfigInfoLang;
-  en: ConfigInfoLang;
-}
-
 interface AppConfig {
   version: 1;
   exportedAt: string;
   language?: 'cs' | 'en';
   theme?: 'classic' | 'modern' | 'dark';
   activities: ConfigActivity[];
-  info: ConfigInfo;
+  info: { cs: Record<string, string>; en: Record<string, string> };
 }
 
 function generateConfig(lang: string, currentTheme: string): AppConfig {
@@ -277,16 +257,16 @@ function generateConfig(lang: string, currentTheme: string): AppConfig {
     activities: configActivities,
     info: (() => {
       // Merge config info with user notes from localStorage
-      let userNotes = { why: '', how: '', what: '', i: '' };
+      let userNotes = { why: '', how: '', what: '' };
       try {
         const stored = localStorage.getItem('pra_info_notes');
         if (stored) userNotes = JSON.parse(stored);
       } catch { /* default */ }
-      const csInfo = { ...(getCachedConfig()?.info?.cs || translations.cs.info) };
-      const enInfo = { ...(getCachedConfig()?.info?.en || translations.en.info) };
+      const csInfo = { ...(getCachedConfig()?.info?.cs || {}) };
+      const enInfo = { ...(getCachedConfig()?.info?.en || {}) };
       return {
-        cs: { ...csInfo, noteWhy: userNotes.why, noteHow: userNotes.how, noteWhat: userNotes.what, noteI: userNotes.i },
-        en: { ...enInfo, noteWhy: userNotes.why, noteHow: userNotes.how, noteWhat: userNotes.what, noteI: userNotes.i },
+        cs: { ...csInfo, noteWhy: userNotes.why, noteHow: userNotes.how, noteWhat: userNotes.what },
+        en: { ...enInfo, noteWhy: userNotes.why, noteHow: userNotes.how, noteWhat: userNotes.what },
       };
     })(),
   };
