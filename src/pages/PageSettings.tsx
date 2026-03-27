@@ -6,6 +6,7 @@ import { getActivityByType, loadActivities, saveActivities } from '../utils/acti
 import { translations } from '../i18n/translations';
 import { DayEntry, ActivityDefinition } from '../types';
 import { Theme, loadTheme, saveTheme } from '../utils/theme';
+import { getCachedConfig } from '../utils/config';
 
 function formatDate(dateStr: string, lang: string): string {
   const date = new Date(dateStr);
@@ -211,35 +212,24 @@ interface ConfigActivity {
   en: { name: string; description: string; variants?: string[] };
 }
 
+interface ConfigInfoLang {
+  title?: string;
+  subtitle?: string;
+  intro1?: string;
+  intro2?: string;
+  sequence?: string;
+  intro3?: string;
+  bioTitle?: string;
+  bioText?: string;
+  psychTitle?: string;
+  psychText?: string;
+  philoTitle?: string;
+  philoText?: string;
+}
+
 interface ConfigInfo {
-  cs: {
-    title: string;
-    subtitle: string;
-    intro1: string;
-    intro2: string;
-    sequence: string;
-    intro3: string;
-    bioTitle: string;
-    bioText: string;
-    psychTitle: string;
-    psychText: string;
-    philoTitle: string;
-    philoText: string;
-  };
-  en: {
-    title: string;
-    subtitle: string;
-    intro1: string;
-    intro2: string;
-    sequence: string;
-    intro3: string;
-    bioTitle: string;
-    bioText: string;
-    psychTitle: string;
-    psychText: string;
-    philoTitle: string;
-    philoText: string;
-  };
+  cs: ConfigInfoLang;
+  en: ConfigInfoLang;
 }
 
 interface AppConfig {
@@ -286,8 +276,8 @@ function generateConfig(lang: string, currentTheme: string): AppConfig {
     theme: currentTheme as 'classic' | 'modern' | 'dark',
     activities: configActivities,
     info: {
-      cs: { ...translations.cs.info },
-      en: { ...translations.en.info },
+      cs: { ...(getCachedConfig()?.info?.cs || translations.cs.info) },
+      en: { ...(getCachedConfig()?.info?.en || translations.en.info) },
     },
   };
 }
@@ -393,14 +383,15 @@ export default function PageSettings() {
         importConfig(config, config.language || language);
         // Import language
         if (config.language && (config.language === 'cs' || config.language === 'en')) {
-          setLanguage(config.language);
+          localStorage.setItem('pra_language', config.language);
         }
         // Import theme
         if (config.theme && (config.theme === 'classic' || config.theme === 'modern' || config.theme === 'dark')) {
-          setThemeState(config.theme);
           saveTheme(config.theme);
         }
         setImportStatus('success');
+        // Reload to apply all changes (info, language, theme, activities)
+        setTimeout(() => window.location.reload(), 1500);
       } catch {
         setImportStatus('error');
       }
