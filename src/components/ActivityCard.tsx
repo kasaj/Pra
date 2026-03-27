@@ -21,9 +21,14 @@ export default function ActivityCard({ activity, onClick, completedToday, comple
     >
       <div className="flex items-center gap-3">
         <span className="text-2xl">{activity.emoji}</span>
-        <span className="font-serif text-themed-primary flex-1">{activity.name}</span>
+        <div className="flex-1 min-w-0">
+          <span className="font-serif text-themed-primary">{activity.name}</span>
+          {activity.description && (
+            <p className="text-xs text-themed-faint mt-0.5 truncate">{activity.description}</p>
+          )}
+        </div>
         {completedToday && (
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1 flex-shrink-0">
             <span className="w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-solid)' }}>
               <svg className="w-3 h-3" style={{ color: 'var(--accent-text-on-solid)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -35,7 +40,7 @@ export default function ActivityCard({ activity, onClick, completedToday, comple
           </span>
         )}
         {activity.durationMinutes && (
-          <span className="text-sm text-themed-accent-solid bg-themed-accent px-2 py-0.5 rounded-full">
+          <span className="text-sm text-themed-accent-solid bg-themed-accent px-2 py-0.5 rounded-full flex-shrink-0">
             {activity.durationMinutes} {t.today.min}
           </span>
         )}
