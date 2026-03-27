@@ -174,6 +174,12 @@
       "title": "Info",
       "subtitle": "Kontext a záměr",
       "intro": "Kvalita vědomí se nebuduje informacemi, ale opakovanou praxí malých kroků, které sledují přirozenou posloupnost: myšlenka → slovo → čin → zvyk → charakter → osud.",
+      "quotes": [
+        { "text": "Skutečně jsem jen tím „já", které jsem si sám nevymyslel.", "author": "Kódó Sawaki" },
+        { "text": "Nejsem tím, co se mi přihodilo, ale tím, čím jsem se rozhodl stát.", "author": "Carl Gustav Jung" },
+        { "text": "Žádný problém nelze vyřešit na stejné úrovni vědomí, na kterém vznikl.", "author": "Albert Einstein" },
+        { "text": "Kde vědomí bloudí, tam energie proudí.", "author": "Dandapani" }
+      ],
       "why": "Ale než se ptáme jak tuto posloupnost kultivovat a co konkrétně dělat, musíme se ptát hlouběji: proč. Člověk bez zakořenění ve smyslu, směru, důvodu — nemůže žádnou praxi dlouhodobě udržet. Proč je kořen, ze kterého vše ostatní vyrůstá.",
       "how": "Teprve pak nastupuje jak — a zde nejde o techniku, ale o způsob bytí. Disciplína je forma lásky k tomu, čím se chceme stát. Je to most mezi záměrem a skutečností.",
       "what": "A teprve na tomto základě má smysl mluvit o co — o metodě, obsahu, konkrétní praxi. Obsah bez směru je hluk, metoda bez formy chaos. Ale co, které vyrůstá z proč a je neseno jak, se vrývá do charakteru.",
@@ -191,6 +197,12 @@
       "title": "Info",
       "subtitle": "Context and intent",
       "intro": "The quality of consciousness is not built through information, but through the repeated practice of small steps that follow a natural sequence: thought → word → action → habit → character → destiny.",
+      "quotes": [
+        { "text": "I am truly only the 'I' that I did not invent myself.", "author": "Kōdō Sawaki" },
+        { "text": "I am not what happened to me, I am what I choose to become.", "author": "Carl Gustav Jung" },
+        { "text": "No problem can be solved from the same level of consciousness that created it.", "author": "Albert Einstein" },
+        { "text": "Where awareness goes, energy flows.", "author": "Dandapani" }
+      ],
       "why": "But before we ask how to cultivate this sequence, and what exactly to do, we must ask something deeper: why. A person without rootedness in meaning, direction, purpose — cannot sustain any practice over time. Why is the root from which everything else grows.",
       "how": "Only then comes how — and here it is not about technique, but about a way of being. Discipline is a form of love for what we are becoming. It is the bridge between intention and reality.",
       "what": "And only on this foundation does it make sense to speak of what — of method, content, concrete practice. Content without direction is noise, method without form is chaos. But what, which grows from why and is carried by how, carves itself into character.",

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '../i18n';
-import { getCachedConfig, ConfigInfo } from '../utils/config';
+import { getCachedConfig, ConfigInfo, ConfigQuote } from '../utils/config';
 
 const NOTES_KEY = 'pra_info_notes';
 
@@ -97,6 +97,17 @@ export default function PageInfo() {
         {info.intro && (
           <section className="card">
             <p>{info.intro}</p>
+          </section>
+        )}
+
+        {cfgInfo.quotes && cfgInfo.quotes.length > 0 && (
+          <section className="space-y-3">
+            {cfgInfo.quotes.map((q: ConfigQuote, i: number) => (
+              <blockquote key={i} className="card border-l-4 py-3" style={{ borderLeftColor: 'var(--accent-solid)' }}>
+                <p className="italic text-themed-primary">{q.text}</p>
+                <footer className="mt-2 text-sm text-themed-faint">— {q.author}</footer>
+              </blockquote>
+            ))}
           </section>
         )}
 

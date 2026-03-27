@@ -1,7 +1,13 @@
+export interface ConfigQuote {
+  text: string;
+  author: string;
+}
+
 export interface ConfigInfo {
   title?: string;
   subtitle?: string;
   intro?: string;
+  quotes?: ConfigQuote[];
   why?: string;
   how?: string;
   what?: string;
