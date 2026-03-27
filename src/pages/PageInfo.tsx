@@ -12,17 +12,12 @@ function notesKey(lang: string): string {
   return `pra_info_notes_${lang}`;
 }
 
-function loadNotes(lang: string, cfgInfo: ConfigInfo): InfoNotes {
+function loadNotes(lang: string): InfoNotes {
   try {
     const stored = localStorage.getItem(notesKey(lang));
     if (stored) return JSON.parse(stored);
   } catch { /* default */ }
-  // First run for this language - use config defaults
-  return {
-    why: cfgInfo.noteWhy || '',
-    how: cfgInfo.noteHow || '',
-    what: cfgInfo.noteWhat || '',
-  };
+  return { why: '', how: '', what: '' };
 }
 
 function saveNotesForLang(lang: string, notes: InfoNotes): void {
@@ -52,12 +47,13 @@ function Paragraphs({ text }: { text: string }) {
 export default function PageInfo() {
   const { language, t } = useLanguage();
 
+  // Config is always source of truth for content
   const config = getCachedConfig();
   const cfgInfo: ConfigInfo = config?.info?.[language] || {};
 
-  const [notes, setNotes] = useState<InfoNotes>(() => loadNotes(language, cfgInfo));
+  // User notes - stored separately, config noteWhy/How/What are placeholders only
+  const [notes, setNotes] = useState<InfoNotes>(() => loadNotes(language));
 
-  // New fields with fallback to legacy fields then translations
   const info = {
     title: cfgInfo.title || t.info.title,
     subtitle: cfgInfo.subtitle || t.info.subtitle,
@@ -73,12 +69,10 @@ export default function PageInfo() {
     philoText: cfgInfo.philoText || t.info.philoText,
   };
 
-  const placeholder = t.info.notePlaceholder;
-
   // Reload notes when language changes
   useEffect(() => {
-    setNotes(loadNotes(language, cfgInfo));
-  }, [language, cfgInfo]);
+    setNotes(loadNotes(language));
+  }, [language]);
 
   const updateNote = useCallback((key: keyof InfoNotes, value: string) => {
     setNotes((prev) => {
@@ -118,7 +112,7 @@ export default function PageInfo() {
             <h2 className="font-serif text-xl text-themed-primary mb-3">{language === 'cs' ? 'Proč' : 'Why'}</h2>
             <div className="card">
               <Paragraphs text={info.why} />
-              <NoteField value={notes.why} onChange={(v) => updateNote('why', v)} placeholder={placeholder} />
+              <NoteField value={notes.why} onChange={(v) => updateNote('why', v)} placeholder={cfgInfo.noteWhy || t.info.notePlaceholder} />
             </div>
           </section>
         )}
@@ -128,7 +122,7 @@ export default function PageInfo() {
             <h2 className="font-serif text-xl text-themed-primary mb-3">{language === 'cs' ? 'Jak' : 'How'}</h2>
             <div className="card">
               <Paragraphs text={info.how} />
-              <NoteField value={notes.how} onChange={(v) => updateNote('how', v)} placeholder={placeholder} />
+              <NoteField value={notes.how} onChange={(v) => updateNote('how', v)} placeholder={cfgInfo.noteHow || t.info.notePlaceholder} />
             </div>
           </section>
         )}
@@ -138,7 +132,7 @@ export default function PageInfo() {
             <h2 className="font-serif text-xl text-themed-primary mb-3">{language === 'cs' ? 'Co' : 'What'}</h2>
             <div className="card">
               <Paragraphs text={info.what} />
-              <NoteField value={notes.what} onChange={(v) => updateNote('what', v)} placeholder={placeholder} />
+              <NoteField value={notes.what} onChange={(v) => updateNote('what', v)} placeholder={cfgInfo.noteWhat || t.info.notePlaceholder} />
             </div>
           </section>
         )}
