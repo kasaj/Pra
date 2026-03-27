@@ -56,18 +56,23 @@ export default function PageToday() {
   const handleSaveActivity = useCallback((activity: ActivityDefinition) => {
     const current = loadActivities();
     const index = current.findIndex((a) => a.type === activity.type);
+    const isNew = index < 0;
 
-    if (index >= 0) {
-      current[index] = activity;
-    } else {
+    if (isNew) {
       current.push(activity);
+    } else {
+      current[index] = activity;
     }
 
     saveActivities(current);
     markActivityModified(activity.type);
     setActivities(current);
-    setEditingActivity(null);
-    setShowNewActivity(false);
+
+    // Only close editor for new activities
+    if (isNew) {
+      setEditingActivity(null);
+      setShowNewActivity(false);
+    }
   }, []);
 
   const handleDeleteActivity = useCallback(() => {

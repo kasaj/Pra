@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ActivityDefinition } from '../types';
 import { useLanguage } from '../i18n';
 import { generateActivityType } from '../utils/activities';
@@ -20,6 +20,28 @@ export default function ActivityEditor({ activity, onSave, onDelete, onClose }: 
   const [isTimed, setIsTimed] = useState(activity?.durationMinutes !== null);
   const [duration, setDuration] = useState(activity?.durationMinutes?.toString() || '15');
   const [variantsText, setVariantsText] = useState(activity?.variants?.join(', ') || '');
+
+  const initialRender = useRef(true);
+
+  // Auto-save on change for existing activities
+  useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+      return;
+    }
+    if (isNew || !name.trim()) return;
+
+    const variants = variantsText.split(',').map(v => v.trim()).filter(Boolean);
+    const updated: ActivityDefinition = {
+      type: activity?.type || generateActivityType(),
+      name: name.trim(),
+      emoji: emoji || '✨',
+      description: description.trim(),
+      durationMinutes: isTimed ? parseInt(duration, 10) || 15 : null,
+      variants: variants.length > 0 ? variants : undefined,
+    };
+    onSave(updated);
+  }, [name, emoji, description, isTimed, duration, variantsText]);
 
   const handleSubmit = () => {
     if (!name.trim()) return;
@@ -152,13 +174,15 @@ export default function ActivityEditor({ activity, onSave, onDelete, onClose }: 
         </div>
 
         <div className="p-4 border-t border-themed space-y-3">
-          <button
-            onClick={handleSubmit}
-            disabled={!name.trim()}
-            className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isNew ? t.editor.addActivity : t.editor.saveChanges}
-          </button>
+          {isNew && (
+            <button
+              onClick={handleSubmit}
+              disabled={!name.trim()}
+              className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {t.editor.addActivity}
+            </button>
+          )}
 
           {!isNew && onDelete && (
             <button
