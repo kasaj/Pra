@@ -6,10 +6,10 @@
   "activities": [
     {
       "type": "sobe",
-      "emoji": "⏸️",
+      "emoji": "🐌",
       "durationMinutes": 1,
       "cs": {
-        "name": "Zastavení - Pauza",
+        "name": "Zastavení - Zpomalení",
         "description": "Na pár minut se vědomě zastavit, vnímat, pobýt sám se sebou...",
         "variants": [
           "Dýchání nosem",
