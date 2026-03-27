@@ -33,10 +33,8 @@ export default function PageToday() {
   const untimedActivities = translatedActivities.filter((a) => a.durationMinutes === null);
 
   // Session timestamp - activities before this are "previous" (gray), after are "current" (blue)
-  const [sessionStart, setSessionStart] = useState(() => {
-    const stored = localStorage.getItem('pra_session_start');
-    return stored || new Date().toISOString();
-  });
+  // New session on every page load / refresh
+  const [sessionStart, setSessionStart] = useState(() => new Date().toISOString());
 
   // Auto-detect midnight - start new session
   useEffect(() => {
@@ -44,9 +42,7 @@ export default function PageToday() {
       const todayMidnight = new Date();
       todayMidnight.setHours(0, 0, 0, 0);
       if (new Date(sessionStart) < todayMidnight) {
-        const newSession = todayMidnight.toISOString();
-        setSessionStart(newSession);
-        localStorage.setItem('pra_session_start', newSession);
+        setSessionStart(todayMidnight.toISOString());
         setRefreshKey((k) => k + 1);
       }
     };
@@ -57,9 +53,7 @@ export default function PageToday() {
   }, [sessionStart]);
 
   const handleNewSession = useCallback(() => {
-    const now = new Date().toISOString();
-    setSessionStart(now);
-    localStorage.setItem('pra_session_start', now);
+    setSessionStart(new Date().toISOString());
     setRefreshKey((k) => k + 1);
   }, []);
 
@@ -241,13 +235,18 @@ export default function PageToday() {
             <p className="text-themed-faint">{t.today.subtitle}</p>
             <button
               onClick={handleNewSession}
-              className="p-1 transition-colors"
-              style={{ color: 'var(--text-faint)' }}
+              className="px-2 py-0.5 text-xs rounded-lg transition-colors flex items-center gap-1"
+              style={{
+                backgroundColor: 'var(--bg-input)',
+                color: 'var(--text-faint)',
+                border: '1px solid var(--border-light)',
+              }}
             >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
+              reset
             </button>
           </div>
           <div className="flex items-center gap-2">
