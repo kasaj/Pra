@@ -185,7 +185,7 @@
     },
     {
       "type": "test",
-      "emoji": "🧪",
+      "emoji": "❔",
       "durationMinutes": 1,
       "cs": {
         "name": "Test",
