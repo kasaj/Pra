@@ -163,25 +163,25 @@ export default function PageToday() {
 
   return (
     <div className="page-container">
-      <header className="mb-6 flex items-start justify-between">
-        <div>
-          <h1 className="font-serif text-3xl text-themed-primary">{t.today.title}</h1>
-          <p className="text-themed-faint mt-1">{t.today.subtitle}</p>
+      <header className="mb-6">
+        <h1 className="font-serif text-3xl text-themed-primary">{t.today.title}</h1>
+        <div className="flex items-center justify-between mt-1">
+          <p className="text-themed-faint">{t.today.subtitle}</p>
+          <button
+            onClick={() => setEditMode(!editMode)}
+            className="px-3 py-1.5 text-sm rounded-xl transition-colors flex items-center gap-2"
+            style={{
+              backgroundColor: editMode ? 'var(--accent-solid)' : 'var(--bg-input)',
+              color: editMode ? 'var(--accent-text-on-solid)' : 'var(--text-secondary)',
+            }}
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            {editMode ? t.today.done : t.today.edit}
+          </button>
         </div>
-        <button
-          onClick={() => setEditMode(!editMode)}
-          className="px-3 py-1.5 text-sm rounded-xl transition-colors flex items-center gap-2"
-          style={{
-            backgroundColor: editMode ? 'var(--accent-solid)' : 'var(--bg-input)',
-            color: editMode ? 'var(--accent-text-on-solid)' : 'var(--text-secondary)',
-          }}
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-          {editMode ? t.today.done : t.today.edit}
-        </button>
       </header>
 
       {editMode && (
