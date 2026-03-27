@@ -37,6 +37,11 @@ function NoteField({ value, onChange, placeholder }: {
   );
 }
 
+function Paragraphs({ text }: { text: string }) {
+  const parts = text.split('\n\n');
+  return <>{parts.map((p, i) => <p key={i} className={i > 0 ? 'mt-4' : ''}>{p}</p>)}</>;
+}
+
 export default function PageInfo() {
   const { language, t } = useLanguage();
   const [notes, setNotes] = useState<InfoNotes>(loadNotes);
@@ -96,7 +101,7 @@ export default function PageInfo() {
       <div className="space-y-6 text-themed-secondary leading-relaxed">
         {info.intro && (
           <section className="card">
-            <p>{info.intro}</p>
+            <Paragraphs text={info.intro} />
           </section>
         )}
 
@@ -115,7 +120,7 @@ export default function PageInfo() {
           <section>
             <h2 className="font-serif text-xl text-themed-primary mb-3">{language === 'cs' ? 'Proč' : 'Why'}</h2>
             <div className="card">
-              <p>{info.why}</p>
+              <Paragraphs text={info.why} />
               <NoteField value={notes.why} onChange={(v) => updateNote('why', v)} placeholder={placeholder} />
             </div>
           </section>
@@ -125,7 +130,7 @@ export default function PageInfo() {
           <section>
             <h2 className="font-serif text-xl text-themed-primary mb-3">{language === 'cs' ? 'Jak' : 'How'}</h2>
             <div className="card">
-              <p>{info.how}</p>
+              <Paragraphs text={info.how} />
               <NoteField value={notes.how} onChange={(v) => updateNote('how', v)} placeholder={placeholder} />
             </div>
           </section>
@@ -135,7 +140,7 @@ export default function PageInfo() {
           <section>
             <h2 className="font-serif text-xl text-themed-primary mb-3">{language === 'cs' ? 'Co' : 'What'}</h2>
             <div className="card">
-              <p>{info.what}</p>
+              <Paragraphs text={info.what} />
               <NoteField value={notes.what} onChange={(v) => updateNote('what', v)} placeholder={placeholder} />
             </div>
           </section>
@@ -145,7 +150,7 @@ export default function PageInfo() {
           <section>
             <h2 className="font-serif text-xl text-themed-primary mb-3">{info.bioTitle}</h2>
             <div className="card">
-              <p>{info.bioText}</p>
+              <Paragraphs text={info.bioText} />
             </div>
           </section>
         )}
@@ -154,7 +159,7 @@ export default function PageInfo() {
           <section>
             <h2 className="font-serif text-xl text-themed-primary mb-3">{info.psychTitle}</h2>
             <div className="card">
-              <p>{info.psychText}</p>
+              <Paragraphs text={info.psychText} />
             </div>
           </section>
         )}
@@ -163,7 +168,7 @@ export default function PageInfo() {
           <section>
             <h2 className="font-serif text-xl text-themed-primary mb-3">{info.philoTitle}</h2>
             <div className="card">
-              <p>{info.philoText}</p>
+              <Paragraphs text={info.philoText} />
             </div>
           </section>
         )}
