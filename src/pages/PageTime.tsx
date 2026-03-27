@@ -124,7 +124,7 @@ export default function PageTime() {
   const { t, language } = useLanguage();
   const [data, setData] = useState(() => loadAllData());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [trendRange, setTrendRange] = useState<'day' | 'week' | 'month' | 'all'>('week');
+  const [trendRange, setTrendRange] = useState<'day' | 'week' | 'month'>('week');
   const [editingRecord, setEditingRecord] = useState<Activity | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
@@ -243,31 +243,6 @@ export default function PageTime() {
             const stats = computeStats([a]);
             result.push({ day: time, ...stats });
           });
-      }
-    } else if (trendRange === 'all') {
-      const today = new Date();
-      const firstDate = data.length > 0 ? new Date(data[data.length - 1].date) : today;
-      const totalDays = Math.max(7, Math.ceil((today.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
-      const totalWeeks = Math.ceil(totalDays / 7);
-
-      for (let w = totalWeeks - 1; w >= 0; w--) {
-        const weekEnd = new Date(today);
-        weekEnd.setDate(today.getDate() - w * 7);
-        const weekStart = new Date(weekEnd);
-        weekStart.setDate(weekEnd.getDate() - 6);
-
-        const allActivities: Activity[] = [];
-        for (let d = 0; d < 7; d++) {
-          const date = new Date(weekStart);
-          date.setDate(weekStart.getDate() + d);
-          const dateStr = date.toISOString().split('T')[0];
-          const dayEntry = data.find((de) => de.date === dateStr);
-          if (dayEntry) allActivities.push(...dayEntry.activities);
-        }
-
-        const stats = computeStats(allActivities);
-        const label = `${weekStart.getDate()}.${weekStart.getMonth() + 1}`;
-        result.push({ day: label, ...stats });
       }
     } else {
       const today = new Date();
@@ -423,10 +398,10 @@ export default function PageTime() {
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-serif text-base text-themed-secondary">
-            {trendRange === 'day' ? t.time.dailyTrend : trendRange === 'week' ? t.time.weeklyTrend : trendRange === 'month' ? t.time.monthlyTrend : t.time.allTrend}
+            {trendRange === 'day' ? t.time.dailyTrend : trendRange === 'week' ? t.time.weeklyTrend : t.time.monthlyTrend}
           </h2>
           <div className="flex gap-1 bg-themed-input rounded-lg p-0.5">
-            {(['day', 'week', 'month', 'all'] as const).map((r) => (
+            {(['day', 'week', 'month'] as const).map((r) => (
               <button
                 key={r}
                 onClick={() => setTrendRange(r)}
@@ -436,13 +411,13 @@ export default function PageTime() {
                     : 'text-themed-faint hover:text-themed-secondary'
                 }`}
               >
-                {r === 'day' ? t.time.trendDay : r === 'week' ? t.time.trendWeek : r === 'month' ? t.time.trendMonth : t.time.trendAll}
+                {r === 'day' ? t.time.trendDay : r === 'week' ? t.time.trendWeek : t.time.trendMonth}
               </button>
             ))}
           </div>
         </div>
         <div className="card">
-          <ResponsiveContainer width="100%" height={trendRange === 'all' ? 200 : trendRange === 'month' ? 180 : 150}>
+          <ResponsiveContainer width="100%" height={trendRange === 'month' ? 180 : 150}>
             <AreaChart data={trendData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
               <defs>
                 <linearGradient id="gradCount" x1="0" y1="0" x2="0" y2="1">
@@ -460,10 +435,10 @@ export default function PageTime() {
               </defs>
               <XAxis
                 dataKey="day"
-                tick={{ fontSize: trendRange === 'all' ? 8 : trendRange === 'month' ? 9 : trendRange === 'day' ? 9 : 11, fill: colors.tick }}
+                tick={{ fontSize: trendRange === 'month' ? 9 : trendRange === 'day' ? 9 : 11, fill: colors.tick }}
                 axisLine={false}
                 tickLine={false}
-                interval={trendRange === 'all' ? Math.max(1, Math.floor(trendData.length / 8)) : trendRange === 'month' ? 4 : trendRange === 'day' ? 2 : 0}
+                interval={trendRange === 'month' ? 4 : trendRange === 'day' ? 2 : 0}
               />
               <YAxis yAxisId="rating" domain={[0, 5]} hide />
               <YAxis yAxisId="count" hide />
