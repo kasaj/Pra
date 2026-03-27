@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import { loadAllData, deleteActivitiesByIds } from '../utils/storage';
+import { getChartColors } from '../utils/theme';
 import { getActivityByType, getTranslatedActivity } from '../utils/activities';
 import { useLanguage } from '../i18n';
 import { Activity } from '../types';
@@ -65,8 +66,8 @@ function ActivityRow({ activity, lang, selected, onToggleSelect, t }: ActivityRo
         onClick={onToggleSelect}
         className={`mt-1 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
           selected
-            ? 'bg-forest-600 border-forest-600'
-            : 'border-clay-300 hover:border-forest-400'
+            ? 'bg-themed-accent border-themed-accent'
+            : 'border-themed-medium hover:border-themed-accent'
         }`}
       >
         {selected && (
@@ -78,17 +79,17 @@ function ActivityRow({ activity, lang, selected, onToggleSelect, t }: ActivityRo
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
-          <div className="text-clay-400 text-xs w-12 flex-shrink-0">
+          <div className="text-themed-faint text-xs w-12 flex-shrink-0">
             {formatTime(activity.startedAt, lang)}
           </div>
 
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <span className="text-lg">{def?.emoji}</span>
-            <span className="text-clay-800 font-medium truncate">{def?.name}</span>
+            <span className="text-themed-primary font-medium truncate">{def?.name}</span>
           </div>
 
           {actualTime && (
-            <div className="text-clay-500 text-sm">
+            <div className="text-themed-faint text-sm">
               {actualTime}
             </div>
           )}
@@ -96,20 +97,20 @@ function ActivityRow({ activity, lang, selected, onToggleSelect, t }: ActivityRo
           <div className="text-sm w-16 text-right flex-shrink-0">
             {isTimed ? (
               (activity.ratingBefore || activity.ratingAfter) ? (
-                <span className="text-clay-600">
+                <span className="text-themed-muted">
                   {activity.ratingBefore || '-'}→{activity.ratingAfter || '-'}
                 </span>
               ) : null
             ) : (
               activity.rating && (
-                <span className="text-ochre-500">{'★'.repeat(activity.rating)}</span>
+                <span className="text-themed-ochre">{'★'.repeat(activity.rating)}</span>
               )
             )}
           </div>
         </div>
 
         {noteDisplay && (
-          <div className="mt-1 ml-12 text-sm text-clay-500 italic">
+          <div className="mt-1 ml-12 text-sm text-themed-faint italic">
             "{noteDisplay}"
           </div>
         )}
@@ -311,55 +312,56 @@ export default function PageTime() {
     return (
       <div className="page-container">
         <header className="mb-8">
-          <h1 className="font-serif text-3xl text-clay-800">{t.time.title}</h1>
-          <p className="text-clay-500 mt-2">{t.time.subtitle}</p>
+          <h1 className="font-serif text-3xl text-themed-primary">{t.time.title}</h1>
+          <p className="text-themed-faint mt-2">{t.time.subtitle}</p>
         </header>
 
         <div className="card text-center py-12">
-          <p className="text-clay-500">{t.time.noRecords}</p>
-          <p className="text-clay-400 text-sm mt-2">{t.time.startHint}</p>
+          <p className="text-themed-faint">{t.time.noRecords}</p>
+          <p className="text-themed-faint text-sm mt-2">{t.time.startHint}</p>
         </div>
       </div>
     );
   }
 
-  // Color for rating bars
+  const colors = getChartColors();
+
   const getRatingColor = (rating: number | null): string => {
-    if (rating === null) return '#e4d5c7'; // clay-200
-    if (rating <= 2) return '#bf9a7c'; // ochre
-    if (rating <= 3) return '#6f4b3e'; // clay-600
-    return '#3f6450'; // forest-600
+    if (rating === null) return colors.barEmpty;
+    if (rating <= 2) return colors.barLow;
+    if (rating <= 3) return colors.barMid;
+    return colors.barHigh;
   };
 
   return (
     <div className="page-container">
       <header className="mb-6">
-        <h1 className="font-serif text-3xl text-clay-800">{t.time.title}</h1>
-        <p className="text-clay-500 mt-1">{t.time.subtitle}</p>
+        <h1 className="font-serif text-3xl text-themed-primary">{t.time.title}</h1>
+        <p className="text-themed-faint mt-1">{t.time.subtitle}</p>
       </header>
 
       {/* Summary Section */}
       <section className="mb-6">
-        <h2 className="font-serif text-base text-clay-700 mb-3">{t.time.summaryTitle}</h2>
+        <h2 className="font-serif text-base text-themed-secondary mb-3">{t.time.summaryTitle}</h2>
         <div className="grid grid-cols-2 gap-3">
           <div className="card text-center py-3">
-            <div className="text-2xl font-serif text-forest-600">{summaryStats.totalActivities}</div>
-            <div className="text-xs text-clay-500 mt-1">{t.time.totalActivities}</div>
+            <div className="text-2xl font-serif text-themed-accent-solid">{summaryStats.totalActivities}</div>
+            <div className="text-xs text-themed-faint mt-1">{t.time.totalActivities}</div>
           </div>
           <div className="card text-center py-3">
-            <div className="text-2xl font-serif text-forest-600">
+            <div className="text-2xl font-serif text-themed-accent-solid">
               {summaryStats.hours > 0 && `${summaryStats.hours}${t.time.hours} `}
               {summaryStats.minutes} {t.time.minutes}
             </div>
-            <div className="text-xs text-clay-500 mt-1">{t.time.totalTime}</div>
+            <div className="text-xs text-themed-faint mt-1">{t.time.totalTime}</div>
           </div>
           <div className="card text-center py-3">
-            <div className="text-xl font-mono text-forest-600 tracking-wider">{elapsed.display}</div>
-            <div className="text-xs text-clay-500 mt-1">{t.time.activeDays}</div>
+            <div className="text-xl font-mono text-themed-accent-solid tracking-wider">{elapsed.display}</div>
+            <div className="text-xs text-themed-faint mt-1">{t.time.activeDays}</div>
           </div>
           <div className="card text-center py-3">
-            <div className="text-2xl font-serif text-forest-600">{elapsed.percent}%</div>
-            <div className="text-xs text-clay-500 mt-1">{t.time.practiceRatio}</div>
+            <div className="text-2xl font-serif text-themed-accent-solid">{elapsed.percent}%</div>
+            <div className="text-xs text-themed-faint mt-1">{t.time.practiceRatio}</div>
           </div>
         </div>
       </section>
@@ -367,16 +369,16 @@ export default function PageTime() {
       {/* Trend Section */}
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-serif text-base text-clay-700">
+          <h2 className="font-serif text-base text-themed-secondary">
             {trendRange === 'week' ? t.time.weeklyTrend : t.time.monthlyTrend}
           </h2>
-          <div className="flex gap-1 bg-clay-100 rounded-lg p-0.5">
+          <div className="flex gap-1 bg-themed-input rounded-lg p-0.5">
             <button
               onClick={() => setTrendRange('week')}
               className={`px-3 py-1 text-xs rounded-md transition-colors ${
                 trendRange === 'week'
-                  ? 'bg-white text-forest-700 shadow-sm'
-                  : 'text-clay-500 hover:text-clay-700'
+                  ? 'bg-themed-card text-themed-accent shadow-sm'
+                  : 'text-themed-faint hover:text-themed-secondary'
               }`}
             >
               {t.time.trendWeek}
@@ -385,8 +387,8 @@ export default function PageTime() {
               onClick={() => setTrendRange('month')}
               className={`px-3 py-1 text-xs rounded-md transition-colors ${
                 trendRange === 'month'
-                  ? 'bg-white text-forest-700 shadow-sm'
-                  : 'text-clay-500 hover:text-clay-700'
+                  ? 'bg-themed-card text-themed-accent shadow-sm'
+                  : 'text-themed-faint hover:text-themed-secondary'
               }`}
             >
               {t.time.trendMonth}
@@ -398,7 +400,7 @@ export default function PageTime() {
             <BarChart data={trendData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
               <XAxis
                 dataKey="day"
-                tick={{ fontSize: trendRange === 'month' ? 9 : 11, fill: '#6f4b3e' }}
+                tick={{ fontSize: trendRange === 'month' ? 9 : 11, fill: colors.tick }}
                 axisLine={false}
                 tickLine={false}
                 interval={trendRange === 'month' ? 4 : 0}
@@ -409,8 +411,8 @@ export default function PageTime() {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#fdf9f3',
-                  border: '1px solid #e4d5c7',
+                  backgroundColor: colors.tooltipBg,
+                  border: `1px solid ${colors.tooltipBorder}`,
                   borderRadius: '8px',
                   fontSize: '12px',
                 }}
@@ -426,21 +428,21 @@ export default function PageTime() {
         </div>
         <div className="grid grid-cols-2 gap-3 mt-3">
           <div className="card text-center py-3">
-            <div className="text-2xl font-serif text-forest-600">
+            <div className="text-2xl font-serif text-themed-accent-solid">
               {trendRange === 'week' ? summaryStats.weekActivities : summaryStats.monthActivities}
             </div>
-            <div className="text-xs text-clay-500 mt-1">
+            <div className="text-xs text-themed-faint mt-1">
               {trendRange === 'week' ? t.time.weekActivities : t.time.monthActivities}
             </div>
           </div>
           <div className="card text-center py-3">
-            <div className="text-2xl font-serif text-forest-600">
+            <div className="text-2xl font-serif text-themed-accent-solid">
               {trendRange === 'week'
                 ? <>{summaryStats.week.hours > 0 && `${summaryStats.week.hours}${t.time.hours} `}{summaryStats.week.minutes} {t.time.minutes}</>
                 : <>{summaryStats.month.hours > 0 && `${summaryStats.month.hours}${t.time.hours} `}{summaryStats.month.minutes} {t.time.minutes}</>
               }
             </div>
-            <div className="text-xs text-clay-500 mt-1">
+            <div className="text-xs text-themed-faint mt-1">
               {trendRange === 'week' ? t.time.weekTime : t.time.monthTime}
             </div>
           </div>
@@ -449,19 +451,19 @@ export default function PageTime() {
 
       {chartData.length > 1 && (
         <section className="mb-6">
-          <h2 className="font-serif text-base text-clay-700 mb-3">{t.time.chartTitle}</h2>
+          <h2 className="font-serif text-base text-themed-secondary mb-3">{t.time.chartTitle}</h2>
           <div className="card">
             <ResponsiveContainer width="100%" height={180}>
               <LineChart data={chartData}>
                 <XAxis
                   dataKey="date"
-                  tick={{ fontSize: 11, fill: '#6f4b3e' }}
+                  tick={{ fontSize: 11, fill: colors.tick }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
                   domain={[1, 5]}
-                  tick={{ fontSize: 11, fill: '#6f4b3e' }}
+                  tick={{ fontSize: 11, fill: colors.tick }}
                   axisLine={false}
                   tickLine={false}
                   width={25}
@@ -477,7 +479,7 @@ export default function PageTime() {
                 <Line
                   type="monotone"
                   dataKey="before"
-                  stroke="#bf9a7c"
+                  stroke={colors.before}
                   strokeWidth={2}
                   dot={false}
                   name={t.time.before}
@@ -485,7 +487,7 @@ export default function PageTime() {
                 <Line
                   type="monotone"
                   dataKey="after"
-                  stroke="#3f6450"
+                  stroke={colors.after}
                   strokeWidth={2}
                   dot={false}
                   name={t.time.after}
@@ -498,11 +500,11 @@ export default function PageTime() {
 
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-serif text-base text-clay-700">{t.time.recordsTitle}</h2>
+          <h2 className="font-serif text-base text-themed-secondary">{t.time.recordsTitle}</h2>
           <div className="flex items-center gap-2">
             <button
               onClick={handleSelectAll}
-              className="px-3 py-1.5 text-sm rounded-xl bg-clay-100 text-clay-600
+              className="px-3 py-1.5 text-sm rounded-xl bg-themed-input text-themed-muted
                        hover:bg-clay-200 transition-colors"
             >
               {selectedIds.size === allActivityIds.length ? t.time.deselectAll : t.time.selectAll}
@@ -510,8 +512,8 @@ export default function PageTime() {
             {selectedIds.size > 0 && (
               <button
                 onClick={handleDeleteSelected}
-                className="px-3 py-1.5 text-sm rounded-xl bg-ochre-100 text-ochre-700
-                         hover:bg-ochre-200 transition-colors flex items-center gap-2"
+                className="px-3 py-1.5 text-sm rounded-xl bg-themed-warn text-themed-warn
+                         hover:bg-themed-warn transition-colors flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -527,8 +529,8 @@ export default function PageTime() {
           {data.map((day, dayIndex) => (
             <div key={day.date}>
               {/* Datum jako oddělovač */}
-              <div className={`py-2 px-1 text-sm font-medium text-clay-600 capitalize ${
-                dayIndex > 0 ? 'border-t-2 border-clay-200 mt-2' : ''
+              <div className={`py-2 px-1 text-sm font-medium text-themed-muted capitalize ${
+                dayIndex > 0 ? 'border-t-2 border-themed mt-2' : ''
               }`}>
                 {formatDateFull(day.date, language)}
               </div>

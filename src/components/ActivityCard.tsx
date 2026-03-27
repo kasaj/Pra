@@ -17,7 +17,7 @@ export default function ActivityCard({ activity, onClick, completedToday }: Acti
     >
       <div className="flex items-center gap-3">
         <span className="text-2xl">{activity.emoji}</span>
-        <span className="font-serif text-clay-800 flex-1">{activity.name}</span>
+        <span className="font-serif text-themed-primary flex-1">{activity.name}</span>
         {completedToday && (
           <span className="w-5 h-5 bg-forest-500 rounded-full flex items-center justify-center">
             <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -26,7 +26,7 @@ export default function ActivityCard({ activity, onClick, completedToday }: Acti
           </span>
         )}
         {activity.durationMinutes && (
-          <span className="text-sm text-forest-600 bg-forest-100 px-2 py-0.5 rounded-full">
+          <span className="text-sm text-themed-accent-solid bg-themed-accent px-2 py-0.5 rounded-full">
             {activity.durationMinutes} {t.today.min}
           </span>
         )}

@@ -114,7 +114,7 @@ export default function PageToday() {
               handleMoveActivity(activity.type, 'up');
             }}
             disabled={index === 0}
-            className="p-1 text-clay-400 hover:text-forest-600 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="p-1 text-themed-faint hover:text-themed-accent-solid disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -126,7 +126,7 @@ export default function PageToday() {
               handleMoveActivity(activity.type, 'down');
             }}
             disabled={index === total - 1}
-            className="p-1 text-clay-400 hover:text-forest-600 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="p-1 text-themed-faint hover:text-themed-accent-solid disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -142,7 +142,7 @@ export default function PageToday() {
           completedToday={completedTodayTypes.has(activity.type)}
         />
         {editMode && (
-          <div className="absolute top-2 right-2 w-5 h-5 bg-forest-600 rounded-full
+          <div className="absolute top-2 right-2 w-5 h-5 bg-themed-accent rounded-full
                         flex items-center justify-center">
             <svg className="w-2.5 h-2.5 text-cream-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -158,15 +158,15 @@ export default function PageToday() {
     <div className="page-container">
       <header className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="font-serif text-3xl text-clay-800">{t.today.title}</h1>
-          <p className="text-clay-500 mt-1">{t.today.subtitle}</p>
+          <h1 className="font-serif text-3xl text-themed-primary">{t.today.title}</h1>
+          <p className="text-themed-faint mt-1">{t.today.subtitle}</p>
         </div>
         <button
           onClick={() => setEditMode(!editMode)}
           className={`px-3 py-1.5 text-sm rounded-xl transition-colors flex items-center gap-2 ${
             editMode
-              ? 'bg-forest-600 text-cream-50'
-              : 'bg-clay-200 text-clay-700 hover:bg-clay-300'
+              ? 'bg-themed-accent text-cream-50'
+              : 'bg-clay-200 text-themed-secondary hover:bg-clay-300'
           }`}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -179,12 +179,12 @@ export default function PageToday() {
 
       {editMode && (
         <div className="mb-4 p-3 bg-forest-50 rounded-xl border border-forest-200">
-          <p className="text-sm text-forest-700">{t.today.editHint}</p>
+          <p className="text-sm text-themed-accent">{t.today.editHint}</p>
         </div>
       )}
 
       <section className="mb-6">
-        <h2 className="font-serif text-base text-clay-700 mb-3">{t.today.timedSection}</h2>
+        <h2 className="font-serif text-base text-themed-secondary mb-3">{t.today.timedSection}</h2>
         <div className="space-y-2">
           {timedActivities.map((activity, index) =>
             renderActivityWithControls(activity, index, timedActivities.length)
@@ -193,8 +193,8 @@ export default function PageToday() {
           {editMode && (
             <button
               onClick={handleAddNew}
-              className="w-full p-3 rounded-xl border-2 border-dashed border-clay-300
-                       text-clay-500 hover:border-forest-400 hover:text-forest-600
+              className="w-full p-3 rounded-xl border-2 border-dashed border-themed-medium
+                       text-themed-faint hover:border-themed-accent hover:text-themed-accent-solid
                        transition-colors flex items-center justify-center gap-2 text-sm"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -207,7 +207,7 @@ export default function PageToday() {
       </section>
 
       <section>
-        <h2 className="font-serif text-base text-clay-700 mb-3">{t.today.momentsSection}</h2>
+        <h2 className="font-serif text-base text-themed-secondary mb-3">{t.today.momentsSection}</h2>
         <div className="space-y-2">
           {untimedActivities.map((activity, index) =>
             renderActivityWithControls(activity, index, untimedActivities.length)
@@ -216,8 +216,8 @@ export default function PageToday() {
           {editMode && (
             <button
               onClick={handleAddNew}
-              className="w-full p-3 rounded-xl border-2 border-dashed border-clay-300
-                       text-clay-500 hover:border-forest-400 hover:text-forest-600
+              className="w-full p-3 rounded-xl border-2 border-dashed border-themed-medium
+                       text-themed-faint hover:border-themed-accent hover:text-themed-accent-solid
                        transition-colors flex items-center justify-center gap-2 text-sm"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

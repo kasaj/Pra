@@ -74,14 +74,14 @@ export default function ActivityFlow({ activity, onClose }: ActivityFlowProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-cream-50 z-50 flex flex-col">
-      <div className="p-4 border-b border-clay-200">
+    <div className="fixed inset-0 bg-themed-base z-50 flex flex-col">
+      <div className="p-4 border-b border-themed">
         <div className="max-w-md mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-3xl">{activity.emoji}</span>
-            <h2 className="font-serif text-xl text-clay-800">{activity.name}</h2>
+            <h2 className="font-serif text-xl text-themed-primary">{activity.name}</h2>
           </div>
-          <button onClick={onClose} className="text-clay-400 hover:text-clay-600 p-2">
+          <button onClick={onClose} className="text-themed-faint hover:text-themed-muted p-2">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -94,13 +94,13 @@ export default function ActivityFlow({ activity, onClose }: ActivityFlowProps) {
           {/* Nečasové aktivity - vše na jedné obrazovce */}
           {!isTimed && (
             <div className="space-y-6 py-6">
-              <p className="text-center text-clay-600 leading-relaxed">
+              <p className="text-center text-themed-muted leading-relaxed">
                 {activity.description}
               </p>
 
               {activity.variants && activity.variants.length > 0 && (
                 <div className="space-y-3">
-                  <h3 className="font-serif text-sm text-clay-500 text-center">
+                  <h3 className="font-serif text-sm text-themed-faint text-center">
                     {t.flow.optional}
                   </h3>
                   <div className="flex flex-wrap gap-2 justify-center">
@@ -110,8 +110,8 @@ export default function ActivityFlow({ activity, onClose }: ActivityFlowProps) {
                         onClick={() => setSelectedVariant(selectedVariant === variant ? null : variant)}
                         className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
                           selectedVariant === variant
-                            ? 'bg-forest-100 border-forest-400 text-forest-700'
-                            : 'bg-cream-100 border-clay-200 text-clay-600 hover:border-clay-300'
+                            ? 'bg-themed-accent border-themed-accent text-themed-accent'
+                            : 'bg-themed-input border-themed text-themed-muted hover:border-themed-medium'
                         }`}
                       >
                         {variant}
@@ -123,7 +123,7 @@ export default function ActivityFlow({ activity, onClose }: ActivityFlowProps) {
 
               <div className="space-y-6 pt-4">
                 <div className="space-y-3">
-                  <h3 className="font-serif text-sm text-clay-500 text-center">
+                  <h3 className="font-serif text-sm text-themed-faint text-center">
                     {t.flow.ratingOptional}
                   </h3>
                   <div className="flex justify-center">
@@ -135,9 +135,9 @@ export default function ActivityFlow({ activity, onClose }: ActivityFlowProps) {
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder={t.flow.notePlaceholder}
-                  className="w-full p-4 rounded-xl bg-cream-100 border border-clay-200
-                           focus:outline-none focus:border-forest-400 resize-none h-20
-                           text-clay-800 placeholder:text-clay-400"
+                  className="w-full p-4 rounded-xl bg-themed-input border border-themed
+                           focus:outline-none focus:border-themed-accent resize-none h-20
+                           text-themed-primary placeholder:text-clay-400"
                 />
 
                 <button onClick={handleUntimedSubmit} className="btn-primary w-full">
@@ -150,13 +150,13 @@ export default function ActivityFlow({ activity, onClose }: ActivityFlowProps) {
           {/* Časové aktivity - před (s popisem a variantami) */}
           {isTimed && timedStep === 'rating-before' && (
             <div className="space-y-6 py-6">
-              <p className="text-center text-clay-600 leading-relaxed">
+              <p className="text-center text-themed-muted leading-relaxed">
                 {activity.description}
               </p>
 
               {activity.variants && activity.variants.length > 0 && (
                 <div className="space-y-3">
-                  <h3 className="font-serif text-sm text-clay-500 text-center">
+                  <h3 className="font-serif text-sm text-themed-faint text-center">
                     {t.flow.optional}
                   </h3>
                   <div className="flex flex-wrap gap-2 justify-center">
@@ -166,8 +166,8 @@ export default function ActivityFlow({ activity, onClose }: ActivityFlowProps) {
                         onClick={() => setSelectedVariant(selectedVariant === variant ? null : variant)}
                         className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
                           selectedVariant === variant
-                            ? 'bg-forest-100 border-forest-400 text-forest-700'
-                            : 'bg-cream-100 border-clay-200 text-clay-600 hover:border-clay-300'
+                            ? 'bg-themed-accent border-themed-accent text-themed-accent'
+                            : 'bg-themed-input border-themed text-themed-muted hover:border-themed-medium'
                         }`}
                       >
                         {variant}
@@ -178,10 +178,10 @@ export default function ActivityFlow({ activity, onClose }: ActivityFlowProps) {
               )}
 
               <div className="pt-4 space-y-4">
-                <h3 className="font-serif text-lg text-clay-700 text-center">
+                <h3 className="font-serif text-lg text-themed-secondary text-center">
                   {t.flow.howFeelNow}
                 </h3>
-                <p className="text-center text-clay-500 text-sm">{t.flow.optional}</p>
+                <p className="text-center text-themed-faint text-sm">{t.flow.optional}</p>
 
                 <div className="flex justify-center py-2">
                   <StarRating value={ratingBefore} onChange={setRatingBefore} size="lg" />
@@ -191,9 +191,9 @@ export default function ActivityFlow({ activity, onClose }: ActivityFlowProps) {
                   value={noteBefore}
                   onChange={(e) => setNoteBefore(e.target.value)}
                   placeholder={t.flow.notePlaceholder}
-                  className="w-full p-4 rounded-xl bg-cream-100 border border-clay-200
-                           focus:outline-none focus:border-forest-400 resize-none h-20
-                           text-clay-800 placeholder:text-clay-400"
+                  className="w-full p-4 rounded-xl bg-themed-input border border-themed
+                           focus:outline-none focus:border-themed-accent resize-none h-20
+                           text-themed-primary placeholder:text-clay-400"
                 />
 
                 <button onClick={handleTimedBeforeSubmit} className="btn-primary w-full">
@@ -215,10 +215,10 @@ export default function ActivityFlow({ activity, onClose }: ActivityFlowProps) {
           {/* Časové aktivity - po */}
           {isTimed && timedStep === 'rating-after' && (
             <div className="space-y-6 py-8">
-              <h3 className="font-serif text-2xl text-clay-800 text-center">
+              <h3 className="font-serif text-2xl text-themed-primary text-center">
                 {t.flow.whatShifted}
               </h3>
-              <p className="text-center text-clay-500 text-sm">{t.flow.optional}</p>
+              <p className="text-center text-themed-faint text-sm">{t.flow.optional}</p>
 
               <div className="flex justify-center py-4">
                 <StarRating value={ratingAfter} onChange={setRatingAfter} size="lg" />
@@ -228,9 +228,9 @@ export default function ActivityFlow({ activity, onClose }: ActivityFlowProps) {
                 value={noteAfter}
                 onChange={(e) => setNoteAfter(e.target.value)}
                 placeholder={t.flow.notePlaceholder}
-                className="w-full p-4 rounded-xl bg-cream-100 border border-clay-200
-                         focus:outline-none focus:border-forest-400 resize-none h-20
-                         text-clay-800 placeholder:text-clay-400"
+                className="w-full p-4 rounded-xl bg-themed-input border border-themed
+                         focus:outline-none focus:border-themed-accent resize-none h-20
+                         text-themed-primary placeholder:text-clay-400"
               />
 
               <button onClick={handleTimedAfterSubmit} className="btn-primary w-full">

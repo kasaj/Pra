@@ -146,15 +146,15 @@ export default function Timer({ durationMinutes, onComplete, onCancel }: TimerPr
             strokeWidth="4"
             strokeLinecap="round"
             strokeDasharray={`${progress * 283} 283`}
-            className="text-forest-600 transition-all duration-1000"
+            className="text-themed-accent-solid transition-all duration-1000"
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="font-serif text-4xl text-clay-800">
+          <span className="font-serif text-4xl text-themed-primary">
             {minutes}:{seconds.toString().padStart(2, '0')}
           </span>
           {isPaused && (
-            <span className="text-sm text-clay-500 mt-1">
+            <span className="text-sm text-themed-faint mt-1">
               {isPausedByVisibility ? t.timer.pageInactive : t.timer.paused}
             </span>
           )}
@@ -165,20 +165,20 @@ export default function Timer({ durationMinutes, onComplete, onCancel }: TimerPr
         <div className="flex gap-3">
           <button
             onClick={togglePause}
-            className="flex-1 px-4 py-2 rounded-xl bg-clay-200 text-clay-700 hover:bg-clay-300 transition-colors"
+            className="flex-1 px-4 py-2 rounded-xl bg-clay-200 text-themed-secondary hover:bg-clay-300 transition-colors"
           >
             {isRunning ? t.timer.pause : t.timer.resume}
           </button>
           <button
             onClick={onCancel}
-            className="flex-1 px-4 py-2 rounded-xl text-clay-500 hover:text-clay-700 transition-colors"
+            className="flex-1 px-4 py-2 rounded-xl text-themed-faint hover:text-themed-secondary transition-colors"
           >
             {t.timer.cancel}
           </button>
         </div>
         <button
           onClick={handleFinishEarly}
-          className="w-full px-4 py-2 rounded-xl bg-forest-600 text-white hover:bg-forest-700 transition-colors"
+          className="w-full px-4 py-2 rounded-xl bg-themed-accent text-white hover:bg-forest-700 transition-colors"
         >
           {t.timer.finishEarly}
         </button>

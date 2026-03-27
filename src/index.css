@@ -2,17 +2,145 @@
 @tailwind components;
 @tailwind utilities;
 
+/* === Theme: Classic (default) === */
+:root, [data-theme="classic"] {
+  --bg-base: #fefdfb;
+  --bg-card: #fdf9f3;
+  --bg-input: #fdf9f3;
+  --bg-nav: #fdf9f3;
+  --border-light: #e4d5c7;
+  --border-medium: #d3baa3;
+  --text-primary: #5b3f35;
+  --text-secondary: #6f4b3e;
+  --text-muted: #885b47;
+  --text-faint: #a37054;
+  --text-placeholder: #bf9a7c;
+  --accent-bg: #e2ebe4;
+  --accent-border: #729a84;
+  --accent-text: #345142;
+  --accent-solid: #3f6450;
+  --accent-solid-hover: #345142;
+  --accent-text-on-solid: #fefdfb;
+  --warn-bg: #f9edd9;
+  --warn-text: #9f4f1c;
+  --error-bg: #fee2e2;
+  --error-text: #b91c1c;
+  --success-bg: #e2ebe4;
+  --success-text: #345142;
+  --ochre-text: #c06a20;
+  --chart-before: #bf9a7c;
+  --chart-after: #3f6450;
+  --chart-bar-empty: #e4d5c7;
+  --chart-bar-low: #bf9a7c;
+  --chart-bar-mid: #6f4b3e;
+  --chart-bar-high: #3f6450;
+  --chart-tick: #6f4b3e;
+  --chart-tooltip-bg: #fdf9f3;
+  --chart-tooltip-border: #e4d5c7;
+  --font-heading: Georgia, Cambria, 'Times New Roman', serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --radius-card: 1rem;
+  --radius-button: 0.75rem;
+  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+/* === Theme: Modern === */
+[data-theme="modern"] {
+  --bg-base: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-input: #f1f5f9;
+  --bg-nav: #ffffff;
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --text-primary: #0f172a;
+  --text-secondary: #1e293b;
+  --text-muted: #475569;
+  --text-faint: #64748b;
+  --text-placeholder: #94a3b8;
+  --accent-bg: #eff6ff;
+  --accent-border: #3b82f6;
+  --accent-text: #1e40af;
+  --accent-solid: #2563eb;
+  --accent-solid-hover: #1d4ed8;
+  --accent-text-on-solid: #ffffff;
+  --warn-bg: #fef3c7;
+  --warn-text: #92400e;
+  --error-bg: #fee2e2;
+  --error-text: #b91c1c;
+  --success-bg: #dcfce7;
+  --success-text: #166534;
+  --ochre-text: #ea580c;
+  --chart-before: #94a3b8;
+  --chart-after: #2563eb;
+  --chart-bar-empty: #e2e8f0;
+  --chart-bar-low: #94a3b8;
+  --chart-bar-mid: #475569;
+  --chart-bar-high: #2563eb;
+  --chart-tick: #475569;
+  --chart-tooltip-bg: #ffffff;
+  --chart-tooltip-border: #e2e8f0;
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --radius-card: 0.75rem;
+  --radius-button: 0.5rem;
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+/* === Theme: Dark === */
+[data-theme="dark"] {
+  --bg-base: #0f172a;
+  --bg-card: #1e293b;
+  --bg-input: #334155;
+  --bg-nav: #1e293b;
+  --border-light: #334155;
+  --border-medium: #475569;
+  --text-primary: #f1f5f9;
+  --text-secondary: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+  --text-placeholder: #475569;
+  --accent-bg: #1e3a5f;
+  --accent-border: #38bdf8;
+  --accent-text: #7dd3fc;
+  --accent-solid: #0ea5e9;
+  --accent-solid-hover: #0284c7;
+  --accent-text-on-solid: #0f172a;
+  --warn-bg: #422006;
+  --warn-text: #fbbf24;
+  --error-bg: #450a0a;
+  --error-text: #fca5a5;
+  --success-bg: #052e16;
+  --success-text: #86efac;
+  --ochre-text: #fbbf24;
+  --chart-before: #64748b;
+  --chart-after: #38bdf8;
+  --chart-bar-empty: #334155;
+  --chart-bar-low: #64748b;
+  --chart-bar-mid: #94a3b8;
+  --chart-bar-high: #38bdf8;
+  --chart-tick: #94a3b8;
+  --chart-tooltip-bg: #1e293b;
+  --chart-tooltip-border: #334155;
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --radius-card: 0.75rem;
+  --radius-button: 0.5rem;
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.3);
+}
+
 @layer base {
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: var(--font-body);
   }
 
   body {
-    @apply bg-cream-50 text-clay-900 min-h-screen;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    min-height: 100vh;
   }
 
   h1, h2, h3, h4 {
-    font-family: Georgia, Cambria, 'Times New Roman', serif;
+    font-family: var(--font-heading);
   }
 }
 
@@ -22,20 +150,60 @@
   }
 
   .card {
-    @apply bg-cream-100 rounded-2xl p-4 shadow-sm;
+    background-color: var(--bg-card);
+    border-radius: var(--radius-card);
+    padding: 1rem;
+    box-shadow: var(--shadow-card);
   }
 
   .btn-primary {
-    @apply bg-forest-600 text-cream-50 px-6 py-3 rounded-xl
-           hover:bg-forest-700 transition-colors;
+    background-color: var(--accent-solid);
+    color: var(--accent-text-on-solid);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-button);
+    transition: background-color 0.15s;
+  }
+  .btn-primary:hover {
+    background-color: var(--accent-solid-hover);
   }
 
   .nav-item {
-    @apply flex-1 py-3 text-center text-sm font-medium
-           text-clay-500 transition-colors;
+    @apply flex-1 py-3 text-center text-sm font-medium transition-colors;
+    color: var(--text-faint);
   }
 
   .nav-item-active {
-    @apply text-forest-700;
+    color: var(--accent-text);
   }
+
+  /* Theme-aware utility overrides */
+  .text-themed-primary { color: var(--text-primary); }
+  .text-themed-secondary { color: var(--text-secondary); }
+  .text-themed-muted { color: var(--text-muted); }
+  .text-themed-faint { color: var(--text-faint); }
+  .text-themed-accent { color: var(--accent-text); }
+  .text-themed-accent-solid { color: var(--accent-solid); }
+  .text-themed-warn { color: var(--warn-text); }
+  .text-themed-ochre { color: var(--ochre-text); }
+  .bg-themed-base { background-color: var(--bg-base); }
+  .bg-themed-card { background-color: var(--bg-card); }
+  .bg-themed-input { background-color: var(--bg-input); }
+  .bg-themed-accent { background-color: var(--accent-bg); }
+  .bg-themed-warn { background-color: var(--warn-bg); }
+  .bg-themed-success { background-color: var(--success-bg); }
+  .bg-themed-error { background-color: var(--error-bg); }
+  .text-themed-success { color: var(--success-text); }
+  .text-themed-error { color: var(--error-text); }
+  .border-themed { border-color: var(--border-light); }
+  .border-themed-medium { border-color: var(--border-medium); }
+  .border-themed-accent { border-color: var(--accent-border); }
+
+  .input-themed {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-light);
+    color: var(--text-primary);
+    border-radius: var(--radius-button);
+  }
+  .input-themed::placeholder { color: var(--text-placeholder); }
+  .input-themed:focus { border-color: var(--accent-border); outline: none; }
 }

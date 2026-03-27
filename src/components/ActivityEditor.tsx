@@ -36,12 +36,12 @@ export default function ActivityEditor({ activity, onSave, onDelete, onClose }: 
 
   return (
     <div className="fixed inset-0 bg-black/30 z-50 flex items-end sm:items-center justify-center">
-      <div className="bg-cream-50 w-full max-w-md rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-auto">
-        <div className="p-4 border-b border-clay-200 flex items-center justify-between">
-          <h2 className="font-serif text-xl text-clay-800">
+      <div className="bg-themed-base w-full max-w-md rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-auto">
+        <div className="p-4 border-b border-themed flex items-center justify-between">
+          <h2 className="font-serif text-xl text-themed-primary">
             {isNew ? t.editor.newActivity : t.editor.editActivity}
           </h2>
-          <button onClick={onClose} className="text-clay-400 hover:text-clay-600 p-2">
+          <button onClick={onClose} className="text-themed-faint hover:text-themed-muted p-2">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -51,54 +51,54 @@ export default function ActivityEditor({ activity, onSave, onDelete, onClose }: 
         <div className="p-4 space-y-5">
           <div className="flex gap-4">
             <div className="w-20">
-              <label className="block text-sm text-clay-600 mb-2">{t.editor.icon}</label>
+              <label className="block text-sm text-themed-muted mb-2">{t.editor.icon}</label>
               <input
                 type="text"
                 value={emoji}
                 onChange={(e) => setEmoji(e.target.value)}
                 placeholder="✨"
-                className="w-full p-3 rounded-xl bg-cream-100 border border-clay-200
-                         focus:outline-none focus:border-forest-400
-                         text-clay-800 text-center text-2xl h-14"
+                className="w-full p-3 rounded-xl bg-themed-input border border-themed
+                         focus:outline-none focus:border-themed-accent
+                         text-themed-primary text-center text-2xl h-14"
               />
             </div>
 
             <div className="flex-1">
-              <label className="block text-sm text-clay-600 mb-2">{t.editor.name}</label>
+              <label className="block text-sm text-themed-muted mb-2">{t.editor.name}</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t.editor.namePlaceholder}
-                className="w-full p-3 rounded-xl bg-cream-100 border border-clay-200
-                         focus:outline-none focus:border-forest-400
-                         text-clay-800 placeholder:text-clay-400 h-14"
+                className="w-full p-3 rounded-xl bg-themed-input border border-themed
+                         focus:outline-none focus:border-themed-accent
+                         text-themed-primary placeholder:text-clay-400 h-14"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm text-clay-600 mb-2">{t.editor.description}</label>
+            <label className="block text-sm text-themed-muted mb-2">{t.editor.description}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder={t.editor.descPlaceholder}
-              className="w-full p-3 rounded-xl bg-cream-100 border border-clay-200
-                       focus:outline-none focus:border-forest-400 resize-none h-16
-                       text-clay-800 placeholder:text-clay-400"
+              className="w-full p-3 rounded-xl bg-themed-input border border-themed
+                       focus:outline-none focus:border-themed-accent resize-none h-16
+                       text-themed-primary placeholder:text-clay-400"
             />
           </div>
 
           <div>
-            <label className="block text-sm text-clay-600 mb-2">{t.editor.activityType}</label>
+            <label className="block text-sm text-themed-muted mb-2">{t.editor.activityType}</label>
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => setIsTimed(true)}
                 className={`flex-1 py-2.5 px-4 rounded-xl border transition-colors text-sm ${
                   isTimed
-                    ? 'bg-forest-100 border-forest-400 text-forest-700'
-                    : 'bg-cream-100 border-clay-200 text-clay-600'
+                    ? 'bg-themed-accent border-themed-accent text-themed-accent'
+                    : 'bg-themed-input border-themed text-themed-muted'
                 }`}
               >
                 {t.editor.withTime}
@@ -108,8 +108,8 @@ export default function ActivityEditor({ activity, onSave, onDelete, onClose }: 
                 onClick={() => setIsTimed(false)}
                 className={`flex-1 py-2.5 px-4 rounded-xl border transition-colors text-sm ${
                   !isTimed
-                    ? 'bg-forest-100 border-forest-400 text-forest-700'
-                    : 'bg-cream-100 border-clay-200 text-clay-600'
+                    ? 'bg-themed-accent border-themed-accent text-themed-accent'
+                    : 'bg-themed-input border-themed text-themed-muted'
                 }`}
               >
                 {t.editor.moment}
@@ -119,22 +119,22 @@ export default function ActivityEditor({ activity, onSave, onDelete, onClose }: 
 
           {isTimed && (
             <div>
-              <label className="block text-sm text-clay-600 mb-2">{t.editor.duration}</label>
+              <label className="block text-sm text-themed-muted mb-2">{t.editor.duration}</label>
               <input
                 type="number"
                 min="1"
                 max="120"
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
-                className="w-full p-3 rounded-xl bg-cream-100 border border-clay-200
-                         focus:outline-none focus:border-forest-400
-                         text-clay-800"
+                className="w-full p-3 rounded-xl bg-themed-input border border-themed
+                         focus:outline-none focus:border-themed-accent
+                         text-themed-primary"
               />
             </div>
           )}
         </div>
 
-        <div className="p-4 border-t border-clay-200 space-y-3">
+        <div className="p-4 border-t border-themed space-y-3">
           <button
             onClick={handleSubmit}
             disabled={!name.trim()}
@@ -146,7 +146,7 @@ export default function ActivityEditor({ activity, onSave, onDelete, onClose }: 
           {!isNew && onDelete && (
             <button
               onClick={onDelete}
-              className="w-full py-2.5 text-ochre-600 hover:text-ochre-700 transition-colors text-sm"
+              className="w-full py-2.5 text-themed-warn hover:text-themed-warn transition-colors text-sm"
             >
               {t.editor.delete}
             </button>

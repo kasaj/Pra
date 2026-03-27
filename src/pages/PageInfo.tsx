@@ -27,11 +27,11 @@ export default function PageInfo() {
   return (
     <div className="page-container">
       <header className="mb-8">
-        <h1 className="font-serif text-3xl text-clay-800">{info.title}</h1>
-        <p className="text-clay-500 mt-2">{info.subtitle}</p>
+        <h1 className="font-serif text-3xl text-themed-primary">{info.title}</h1>
+        <p className="text-themed-faint mt-2">{info.subtitle}</p>
       </header>
 
-      <div className="space-y-6 text-clay-700 leading-relaxed">
+      <div className="space-y-6 text-themed-secondary leading-relaxed">
         {info.intro1 && (
           <section className="card">
             <p>{info.intro1}</p>
@@ -42,7 +42,7 @@ export default function PageInfo() {
           <section className="card">
             <p>{info.intro2}</p>
             {info.sequence && (
-              <p className="font-serif text-lg text-clay-800 mt-4 text-center">
+              <p className="font-serif text-lg text-themed-primary mt-4 text-center">
                 {info.sequence}
               </p>
             )}
@@ -57,7 +57,7 @@ export default function PageInfo() {
 
         {info.bioTitle && info.bioText && (
           <section>
-            <h2 className="font-serif text-xl text-clay-800 mb-3">{info.bioTitle}</h2>
+            <h2 className="font-serif text-xl text-themed-primary mb-3">{info.bioTitle}</h2>
             <div className="card">
               <p>{info.bioText}</p>
             </div>
@@ -66,7 +66,7 @@ export default function PageInfo() {
 
         {info.psychTitle && info.psychText && (
           <section>
-            <h2 className="font-serif text-xl text-clay-800 mb-3">{info.psychTitle}</h2>
+            <h2 className="font-serif text-xl text-themed-primary mb-3">{info.psychTitle}</h2>
             <div className="card">
               <p>{info.psychText}</p>
             </div>
@@ -75,7 +75,7 @@ export default function PageInfo() {
 
         {info.philoTitle && info.philoText && (
           <section>
-            <h2 className="font-serif text-xl text-clay-800 mb-3">{info.philoTitle}</h2>
+            <h2 className="font-serif text-xl text-themed-primary mb-3">{info.philoTitle}</h2>
             <div className="card">
               <p>{info.philoText}</p>
             </div>

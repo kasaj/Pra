@@ -7,12 +7,13 @@ import PageTime from './pages/PageTime';
 import PageInfo from './pages/PageInfo';
 import PageSettings from './pages/PageSettings';
 import { loadConfig } from './utils/config';
+import { loadTheme, applyTheme } from './utils/theme';
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState<Page>('today');
 
   return (
-    <div className="min-h-screen bg-cream-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-base)', color: 'var(--text-primary)' }}>
       <main>
         {currentPage === 'today' && <PageToday />}
         {currentPage === 'time' && <PageTime />}
@@ -29,6 +30,7 @@ function App() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    applyTheme(loadTheme());
     loadConfig().then(() => setReady(true));
   }, []);
 

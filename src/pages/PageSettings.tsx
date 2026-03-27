@@ -5,6 +5,7 @@ import { loadAllData } from '../utils/storage';
 import { getActivityByType, loadActivities, saveActivities } from '../utils/activities';
 import { translations } from '../i18n/translations';
 import { DayEntry, ActivityDefinition } from '../types';
+import { Theme, loadTheme, saveTheme } from '../utils/theme';
 
 function formatDate(dateStr: string, lang: string): string {
   const date = new Date(dateStr);
@@ -321,7 +322,13 @@ export default function PageSettings() {
   const [email, setEmail] = useState('');
   const [saved, setSaved] = useState(false);
   const [importStatus, setImportStatus] = useState<'success' | 'error' | null>(null);
+  const [theme, setThemeState] = useState<Theme>(loadTheme);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleThemeChange = (newTheme: Theme) => {
+    setThemeState(newTheme);
+    saveTheme(newTheme);
+  };
 
   useEffect(() => {
     const settings = loadSettings();
@@ -393,18 +400,18 @@ export default function PageSettings() {
   return (
     <div className="page-container">
       <header className="mb-6">
-        <h1 className="font-serif text-3xl text-clay-800">{t.settings.title}</h1>
+        <h1 className="font-serif text-3xl text-themed-primary">{t.settings.title}</h1>
       </header>
 
       <div className="space-y-6">
         {/* Profil */}
         <section className="card">
-          <h2 className="font-serif text-lg text-clay-800 mb-4">
+          <h2 className="font-serif text-lg text-themed-primary mb-4">
             {t.settings.profile}
           </h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm text-clay-600 mb-2">
+              <label className="block text-sm text-themed-muted mb-2">
                 {t.settings.name}
               </label>
               <input
@@ -412,9 +419,9 @@ export default function PageSettings() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t.settings.namePlaceholder}
-                className="w-full p-3 rounded-xl bg-cream-100 border border-clay-200
-                         focus:outline-none focus:border-forest-400
-                         text-clay-800 placeholder:text-clay-400"
+                className="w-full p-3 rounded-xl bg-themed-input border border-themed
+                         focus:outline-none focus:border-themed-accent
+                         text-themed-primary placeholder:text-clay-400"
               />
             </div>
           </div>
@@ -422,49 +429,49 @@ export default function PageSettings() {
 
         {/* Export / Import */}
         <section className="card">
-          <h2 className="font-serif text-lg text-clay-800 mb-4">
+          <h2 className="font-serif text-lg text-themed-primary mb-4">
             {t.settings.export}
           </h2>
           <div className="space-y-3">
             <button
               onClick={handleExportHistory}
-              className="w-full flex items-center gap-3 p-3 rounded-xl bg-cream-100 border border-clay-200
-                       hover:border-clay-300 transition-colors text-left"
+              className="w-full flex items-center gap-3 p-3 rounded-xl bg-themed-input border border-themed
+                       hover:border-themed-medium transition-colors text-left"
             >
-              <svg className="w-5 h-5 text-clay-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5 text-themed-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
               <div>
-                <div className="text-clay-800 font-medium">{t.settings.exportHistory}</div>
-                <div className="text-sm text-clay-500">{t.settings.exportHistoryDesc}</div>
+                <div className="text-themed-primary font-medium">{t.settings.exportHistory}</div>
+                <div className="text-sm text-themed-faint">{t.settings.exportHistoryDesc}</div>
               </div>
             </button>
             <button
               onClick={handleExportConfig}
-              className="w-full flex items-center gap-3 p-3 rounded-xl bg-cream-100 border border-clay-200
-                       hover:border-clay-300 transition-colors text-left"
+              className="w-full flex items-center gap-3 p-3 rounded-xl bg-themed-input border border-themed
+                       hover:border-themed-medium transition-colors text-left"
             >
-              <svg className="w-5 h-5 text-clay-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5 text-themed-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
               <div>
-                <div className="text-clay-800 font-medium">{t.settings.exportConfig}</div>
-                <div className="text-sm text-clay-500">{t.settings.exportConfigDesc}</div>
+                <div className="text-themed-primary font-medium">{t.settings.exportConfig}</div>
+                <div className="text-sm text-themed-faint">{t.settings.exportConfigDesc}</div>
               </div>
             </button>
             <label
-              className="w-full flex items-center gap-3 p-3 rounded-xl bg-cream-100 border border-clay-200
-                       hover:border-clay-300 transition-colors text-left cursor-pointer"
+              className="w-full flex items-center gap-3 p-3 rounded-xl bg-themed-input border border-themed
+                       hover:border-themed-medium transition-colors text-left cursor-pointer"
             >
-              <svg className="w-5 h-5 text-clay-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5 text-themed-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m4-8l-4-4m0 0L16 8m4-4v12" />
               </svg>
               <div>
-                <div className="text-clay-800 font-medium">{t.settings.importConfig}</div>
-                <div className="text-sm text-clay-500">{t.settings.importConfigDesc}</div>
+                <div className="text-themed-primary font-medium">{t.settings.importConfig}</div>
+                <div className="text-sm text-themed-faint">{t.settings.importConfigDesc}</div>
               </div>
               <input
                 ref={fileInputRef}
@@ -477,8 +484,8 @@ export default function PageSettings() {
             {importStatus && (
               <div className={`p-3 rounded-xl text-sm ${
                 importStatus === 'success'
-                  ? 'bg-forest-100 text-forest-700'
-                  : 'bg-red-100 text-red-700'
+                  ? 'bg-themed-accent text-themed-accent'
+                  : 'bg-themed-error text-themed-error'
               }`}>
                 {importStatus === 'success' ? t.settings.importSuccess : t.settings.importError}
               </div>
@@ -488,20 +495,20 @@ export default function PageSettings() {
 
         {/* Install */}
         <section className="card">
-          <h2 className="font-serif text-lg text-clay-800 mb-3">
+          <h2 className="font-serif text-lg text-themed-primary mb-3">
             {t.settings.installTitle}
           </h2>
-          <div className="space-y-2 text-sm text-clay-600">
+          <div className="space-y-2 text-sm text-themed-muted">
             <p>{t.settings.installStep1}</p>
             <p>{t.settings.installStep2iOS}</p>
             <p>{t.settings.installStep2Android}</p>
-            <p className="text-clay-500 italic mt-2">{t.settings.installNote}</p>
+            <p className="text-themed-faint italic mt-2">{t.settings.installNote}</p>
           </div>
         </section>
 
         {/* Jazyk */}
         <section className="card">
-          <h2 className="font-serif text-lg text-clay-800 mb-4">
+          <h2 className="font-serif text-lg text-themed-primary mb-4">
             {t.settings.language}
           </h2>
           <div className="flex gap-3">
@@ -509,8 +516,8 @@ export default function PageSettings() {
               onClick={() => setLanguage('cs')}
               className={`flex-1 py-3 px-4 rounded-xl border transition-colors ${
                 language === 'cs'
-                  ? 'bg-forest-100 border-forest-400 text-forest-700'
-                  : 'bg-cream-100 border-clay-200 text-clay-600 hover:border-clay-300'
+                  ? 'bg-themed-accent border-themed-accent text-themed-accent'
+                  : 'bg-themed-input border-themed text-themed-muted hover:border-themed-medium'
               }`}
             >
               Čeština
@@ -519,8 +526,8 @@ export default function PageSettings() {
               onClick={() => setLanguage('en')}
               className={`flex-1 py-3 px-4 rounded-xl border transition-colors ${
                 language === 'en'
-                  ? 'bg-forest-100 border-forest-400 text-forest-700'
-                  : 'bg-cream-100 border-clay-200 text-clay-600 hover:border-clay-300'
+                  ? 'bg-themed-accent border-themed-accent text-themed-accent'
+                  : 'bg-themed-input border-themed text-themed-muted hover:border-themed-medium'
               }`}
             >
               English
@@ -528,9 +535,32 @@ export default function PageSettings() {
           </div>
         </section>
 
+        {/* Theme */}
+        <section className="card">
+          <h2 className="font-serif text-lg mb-4" style={{ color: 'var(--text-secondary)' }}>
+            {t.settings.theme}
+          </h2>
+          <div className="flex gap-3">
+            {(['classic', 'modern', 'dark'] as Theme[]).map((th) => (
+              <button
+                key={th}
+                onClick={() => handleThemeChange(th)}
+                className="flex-1 py-3 px-2 rounded-xl border transition-colors text-sm"
+                style={{
+                  backgroundColor: theme === th ? 'var(--accent-bg)' : 'var(--bg-input)',
+                  borderColor: theme === th ? 'var(--accent-border)' : 'var(--border-light)',
+                  color: theme === th ? 'var(--accent-text)' : 'var(--text-muted)',
+                }}
+              >
+                {th === 'classic' ? t.settings.themeClassic : th === 'modern' ? t.settings.themeModern : t.settings.themeDark}
+              </button>
+            ))}
+          </div>
+        </section>
+
         {/* Subscription */}
         <section className="card">
-          <h2 className="font-serif text-lg text-clay-800 mb-4">
+          <h2 className="font-serif text-lg text-themed-primary mb-4">
             {t.settings.subscription}
           </h2>
           <div className="space-y-4">
@@ -540,9 +570,9 @@ export default function PageSettings() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t.settings.subscriptionPlaceholder}
-                className="w-full p-3 rounded-xl bg-cream-100 border border-clay-200
-                         focus:outline-none focus:border-forest-400
-                         text-clay-800 placeholder:text-clay-400"
+                className="w-full p-3 rounded-xl bg-themed-input border border-themed
+                         focus:outline-none focus:border-themed-accent
+                         text-themed-primary placeholder:text-clay-400"
               />
             </div>
             <button
@@ -560,13 +590,13 @@ export default function PageSettings() {
             onClick={handleReset}
             className="w-full flex items-center gap-3 p-3 rounded-xl text-left"
           >
-            <svg className="w-5 h-5 text-ochre-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-themed-ochre" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
             <div>
-              <div className="text-ochre-700 font-medium">{t.settings.resetDefault}</div>
-              <div className="text-sm text-clay-500">{t.settings.resetDefaultDesc}</div>
+              <div className="text-themed-warn font-medium">{t.settings.resetDefault}</div>
+              <div className="text-sm text-themed-faint">{t.settings.resetDefaultDesc}</div>
             </div>
           </button>
         </section>
