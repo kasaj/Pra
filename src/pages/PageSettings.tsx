@@ -346,6 +346,7 @@ export default function PageSettings() {
 
   const handleReset = useCallback(() => {
     if (!window.confirm(t.settings.resetConfirm)) return;
+    if (!window.confirm(t.settings.resetConfirm2)) return;
     // Clear all localStorage
     localStorage.clear();
     // Unregister service workers
@@ -442,12 +443,6 @@ export default function PageSettings() {
                          text-themed-primary placeholder:text-themed-faint"
               />
             </div>
-            <button
-              onClick={handleSave}
-              className="btn-primary w-full mt-4"
-            >
-              {saved ? `${t.settings.saved} ✓` : t.settings.save}
-            </button>
           </div>
         </section>
 
@@ -582,8 +577,16 @@ export default function PageSettings() {
           </div>
         </section>
 
+        {/* Save */}
+        <button
+          onClick={handleSave}
+          className="btn-primary w-full"
+        >
+          {saved ? `${t.settings.saved} ✓` : t.settings.save}
+        </button>
+
         {/* Reset */}
-        <section className="card border-ochre-200">
+        <section className="card" style={{ borderColor: 'var(--warn-text)', borderWidth: '1px' }}>
           <button
             onClick={handleReset}
             className="w-full flex items-center gap-3 p-3 rounded-xl text-left"
