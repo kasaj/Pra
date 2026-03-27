@@ -2,50 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* === Theme: Classic (default) === */
-:root, [data-theme="classic"] {
-  --bg-base: #fefdfb;
-  --bg-card: #fdf9f3;
-  --bg-input: #fdf9f3;
-  --bg-nav: #fdf9f3;
-  --border-light: #e4d5c7;
-  --border-medium: #d3baa3;
-  --text-primary: #5b3f35;
-  --text-secondary: #6f4b3e;
-  --text-muted: #885b47;
-  --text-faint: #a37054;
-  --text-placeholder: #bf9a7c;
-  --accent-bg: #e2ebe4;
-  --accent-border: #729a84;
-  --accent-text: #345142;
-  --accent-solid: #3f6450;
-  --accent-solid-hover: #345142;
-  --accent-text-on-solid: #fefdfb;
-  --warn-bg: #f9edd9;
-  --warn-text: #9f4f1c;
-  --error-bg: #fee2e2;
-  --error-text: #b91c1c;
-  --success-bg: #e2ebe4;
-  --success-text: #345142;
-  --ochre-text: #c06a20;
-  --chart-before: #bf9a7c;
-  --chart-after: #3f6450;
-  --chart-bar-empty: #e4d5c7;
-  --chart-bar-low: #bf9a7c;
-  --chart-bar-mid: #6f4b3e;
-  --chart-bar-high: #3f6450;
-  --chart-tick: #6f4b3e;
-  --chart-tooltip-bg: #fdf9f3;
-  --chart-tooltip-border: #e4d5c7;
-  --font-heading: Georgia, Cambria, 'Times New Roman', serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --radius-card: 1rem;
-  --radius-button: 0.75rem;
-  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-}
-
-/* === Theme: Modern === */
-[data-theme="modern"] {
+/* === Theme: Modern (default) === */
+:root, [data-theme="modern"] {
   --bg-base: #f8fafc;
   --bg-card: #ffffff;
   --bg-input: #f1f5f9;
@@ -84,6 +42,48 @@
   --radius-card: 0.75rem;
   --radius-button: 0.5rem;
   --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+/* === Theme: Classic === */
+[data-theme="classic"] {
+  --bg-base: #fefdfb;
+  --bg-card: #fdf9f3;
+  --bg-input: #fdf9f3;
+  --bg-nav: #fdf9f3;
+  --border-light: #e4d5c7;
+  --border-medium: #d3baa3;
+  --text-primary: #5b3f35;
+  --text-secondary: #6f4b3e;
+  --text-muted: #885b47;
+  --text-faint: #a37054;
+  --text-placeholder: #bf9a7c;
+  --accent-bg: #e2ebe4;
+  --accent-border: #729a84;
+  --accent-text: #345142;
+  --accent-solid: #3f6450;
+  --accent-solid-hover: #345142;
+  --accent-text-on-solid: #fefdfb;
+  --warn-bg: #f9edd9;
+  --warn-text: #9f4f1c;
+  --error-bg: #fee2e2;
+  --error-text: #b91c1c;
+  --success-bg: #e2ebe4;
+  --success-text: #345142;
+  --ochre-text: #c06a20;
+  --chart-before: #bf9a7c;
+  --chart-after: #3f6450;
+  --chart-bar-empty: #e4d5c7;
+  --chart-bar-low: #bf9a7c;
+  --chart-bar-mid: #6f4b3e;
+  --chart-bar-high: #3f6450;
+  --chart-tick: #6f4b3e;
+  --chart-tooltip-bg: #fdf9f3;
+  --chart-tooltip-border: #e4d5c7;
+  --font-heading: Georgia, Cambria, 'Times New Roman', serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --radius-card: 1rem;
+  --radius-button: 0.75rem;
+  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 /* === Theme: Dark === */

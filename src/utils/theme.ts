@@ -5,7 +5,7 @@ const THEME_KEY = 'pra_theme';
 export function loadTheme(): Theme {
   const stored = localStorage.getItem(THEME_KEY);
   if (stored === 'classic' || stored === 'modern' || stored === 'dark') return stored;
-  return 'classic';
+  return 'modern';
 }
 
 export function saveTheme(theme: Theme): void {
