@@ -329,8 +329,8 @@ export default function PageSettings() {
           </h2>
           <div className="space-y-3">
             {/* Backup - highlighted */}
-            <div className="rounded-xl p-3 border-2" style={{ borderColor: 'var(--accent-border)', backgroundColor: 'var(--accent-bg)' }}>
-              <div className="text-themed-accent font-medium mb-2">{t.settings.backupExportDesc}</div>
+            <div className="rounded-xl p-3 border-2 bg-themed-input" style={{ borderColor: 'var(--accent-border)' }}>
+              <div className="text-themed-accent font-medium mb-2">{t.settings.backupExport}</div>
               <div className="flex gap-2">
                 <button
                   onClick={handleExportBackup}
