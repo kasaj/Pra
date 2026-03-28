@@ -316,59 +316,68 @@ function ActivityRow({ activity, allData, lang, selected, onToggleSelect, onClic
         )}
       </button>
 
-      <div className="flex-1 min-w-0 cursor-pointer" onClick={onClickEdit}>
-        {/* Row 1: time, activity emoji, avg mood emoji */}
-        <div className="flex items-center gap-2">
-          <span className="text-themed-faint text-xs">{formatTime(activity.startedAt, lang)}</span>
+      <div className="flex-1 min-w-0 cursor-pointer flex gap-2" onClick={onClickEdit}>
+        {/* Left: time + comments */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-themed-faint text-xs">{formatTime(activity.startedAt, lang)}</span>
+            {actualTime && <span className="text-themed-faint text-xs">{actualTime}</span>}
+          </div>
+          {lastTwo.map((c) => (
+            <div key={`${c.id}-${c.rating || 0}`} className="flex items-baseline gap-1.5 text-sm mt-0.5">
+              <span className="text-themed-faint text-xs flex-shrink-0">{formatTime(c.updatedAt || c.createdAt, lang)}</span>
+              {c.text && <span className="text-themed-muted italic truncate">"{c.text}"</span>}
+            </div>
+          ))}
+        </div>
+
+        {/* Right: emoji column */}
+        <div className="flex flex-col items-center gap-0.5 flex-shrink-0">
           <span className="text-sm">{def?.emoji}</span>
           {chainAvg !== null && <span className="text-sm">{moodEmoji(chainAvg)}</span>}
-          {actualTime && <span className="text-themed-faint text-xs">{actualTime}</span>}
+          {lastTwo.filter(c => c.rating).length > 0 && (
+            <div className="flex flex-col items-center">
+              {lastTwo.map((c) => (
+                c.rating ? <span key={c.id} className="text-xs leading-tight">{moodEmoji(c.rating)}</span> : null
+              ))}
+            </div>
+          )}
         </div>
+      </div>
 
-        {/* Row 2+: last two comments */}
-        {lastTwo.map((c) => (
-          <div key={`${c.id}-${c.rating || 0}`} className="flex items-baseline gap-1.5 text-sm mt-0.5">
-            <span className="text-themed-faint text-xs flex-shrink-0">{formatTime(c.updatedAt || c.createdAt, lang)}</span>
-            {c.rating && <span className="text-xs flex-shrink-0">{moodEmoji(c.rating)}</span>}
-            {c.text && <span className="text-themed-muted italic truncate">"{c.text}"</span>}
-          </div>
-        ))}
-
-
-        {/* Navigation links and + button */}
-        <div className="mt-1 ml-12 flex items-center gap-1.5">
-          {activity.linkedFromId && (
-            <button
-              onClick={() => onNavigate(activity.linkedFromId!)}
-              className="w-6 h-6 rounded-full bg-themed-input flex items-center justify-center text-themed-muted hover:text-themed-accent-solid transition-colors"
-              title={t.time.linkedFrom}
-            >
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-          )}
-          {activity.linkedActivityIds && activity.linkedActivityIds.length > 0 && (
-            <button
-              onClick={() => onNavigate(activity.linkedActivityIds![activity.linkedActivityIds!.length - 1])}
-              className="w-6 h-6 rounded-full bg-themed-input flex items-center justify-center text-themed-muted hover:text-themed-accent-solid transition-colors"
-              title={t.time.linkedTo}
-            >
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          )}
+      {/* Navigation links and + button */}
+      <div className="flex items-center gap-1 flex-shrink-0">
+        {activity.linkedFromId && (
           <button
-            onClick={onCreateLinked}
-            className="w-6 h-6 rounded-full bg-themed-input flex items-center justify-center text-themed-faint hover:text-themed-accent-solid transition-colors"
-            title={t.time.createLinked}
+            onClick={(e) => { e.stopPropagation(); onNavigate(activity.linkedFromId!); }}
+            className="w-5 h-5 rounded-full bg-themed-input flex items-center justify-center text-themed-muted hover:text-themed-accent-solid transition-colors"
+            title={t.time.linkedFrom}
           >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-        </div>
+        )}
+        {activity.linkedActivityIds && activity.linkedActivityIds.length > 0 && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onNavigate(activity.linkedActivityIds![activity.linkedActivityIds!.length - 1]); }}
+            className="w-5 h-5 rounded-full bg-themed-input flex items-center justify-center text-themed-muted hover:text-themed-accent-solid transition-colors"
+            title={t.time.linkedTo}
+          >
+            <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
+        <button
+          onClick={(e) => { e.stopPropagation(); onCreateLinked(); }}
+          className="w-5 h-5 rounded-full bg-themed-input flex items-center justify-center text-themed-faint hover:text-themed-accent-solid transition-colors"
+          title={t.time.createLinked}
+        >
+          <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
       </div>
     </div>
   );
