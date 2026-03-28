@@ -29,7 +29,7 @@ interface PraFile {
   notes?: { cs: Record<string, string>; en: Record<string, string> };
   userModified?: string[];
   sessionStart?: string;
-  activityStats?: Record<string, { count: number; totalSeconds: number; avgRating?: number; avgMood?: number }>;
+  activityStats?: Record<string, { count: number; totalSeconds: number; avgRating?: number; avgMood?: number; totalLinks?: number }>;
 }
 
 function generateBackup(lang: string, currentTheme: string, profileName: string): PraFile {
@@ -52,7 +52,7 @@ function generateBackup(lang: string, currentTheme: string, profileName: string)
   try { const s = localStorage.getItem('pra_user_modified_activities'); if (s) userModified = JSON.parse(s); } catch {}
 
   // Compute per-activity stats from history
-  const activityStats: Record<string, { count: number; totalSeconds: number; avgRating?: number; avgMood?: number }> = {};
+  const activityStats: Record<string, { count: number; totalSeconds: number; avgRating?: number; avgMood?: number; totalLinks?: number }> = {};
   const ratingAccum: Record<string, { sum: number; count: number }> = {};
   const moodAccum: Record<string, { sum: number; count: number }> = {};
   history.forEach((day) => {
@@ -60,6 +60,9 @@ function generateBackup(lang: string, currentTheme: string, profileName: string)
       if (!activityStats[a.type]) activityStats[a.type] = { count: 0, totalSeconds: 0 };
       activityStats[a.type].count++;
       activityStats[a.type].totalSeconds += a.actualDurationSeconds || (a.durationMinutes ? a.durationMinutes * 60 : 60);
+      // Links
+      const links = (a.linkedActivityIds?.length || 0) + (a.linkedFromId ? 1 : 0);
+      if (links > 0) activityStats[a.type].totalLinks = (activityStats[a.type].totalLinks || 0) + links;
       // Legacy rating
       const r = a.ratingAfter || a.rating;
       if (r) {

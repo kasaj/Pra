@@ -206,6 +206,7 @@ function ActivityCalendar({ data, language, onDayClick }: {
                   const actAvg = actRatings.length > 0
                     ? Math.round((actRatings.reduce((s, r) => s + r, 0) / actRatings.length) * 10) / 10
                     : null;
+                  const actLinkCount = (act.linkedActivityIds?.length || 0) + (act.linkedFromId ? 1 : 0);
                   return (
                     <button
                       key={act.id}
@@ -215,6 +216,7 @@ function ActivityCalendar({ data, language, onDayClick }: {
                       <span className="text-xs text-themed-faint w-10">{time}</span>
                       <span className="text-base">{def?.emoji}</span>
                       <span className="text-sm text-themed-primary truncate flex-1">{def?.name}</span>
+                      {actLinkCount > 0 && <span className="text-xs text-themed-faint">{actLinkCount}🔗</span>}
                       {actAvg !== null ? (
                         <span className="text-xs">{moodEmoji(actAvg)}</span>
                       ) : null}
@@ -298,6 +300,7 @@ function ActivityRow({ activity, allData, lang, selected, onToggleSelect, onClic
   const comments = getActivityComments(activity);
   const lastTwo = comments.slice(-2);
   const chainAvg = getChainAvgRating(activity, allData);
+  const linkCount = (activity.linkedActivityIds?.length || 0) + (activity.linkedFromId ? 1 : 0);
 
   return (
     <div className="py-2 flex items-start gap-2">
@@ -317,51 +320,57 @@ function ActivityRow({ activity, allData, lang, selected, onToggleSelect, onClic
       </button>
 
       <div className="flex-1 min-w-0 cursor-pointer" onClick={onClickEdit}>
-        {/* Row 1: + < > emoji avgEmoji time duration */}
-        <div className="flex items-center gap-1.5">
-          <button
-            onClick={(e) => { e.stopPropagation(); onCreateLinked(); }}
-            className="w-4 h-4 rounded-full bg-themed-input flex items-center justify-center text-themed-faint hover:text-themed-accent-solid transition-colors flex-shrink-0"
-          >
-            <svg className="w-2 h-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-          </button>
-          {activity.linkedFromId && (
+        {/* Row 1: time left, right: linkCount emoji avgEmoji */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <span className="text-themed-faint text-xs">{formatTime(activity.startedAt, lang)}</span>
+            {actualTime && <span className="text-themed-faint text-xs">{actualTime}</span>}
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm">{def?.emoji}</span>
+            {chainAvg !== null && <span className="text-sm">{moodEmoji(chainAvg)}</span>}
+            {linkCount > 0 && <span className="text-xs text-themed-faint">{linkCount}🔗</span>}
+            {/* Nav buttons */}
+            {activity.linkedFromId && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onNavigate(activity.linkedFromId!); }}
+                className="w-4 h-4 rounded-full bg-themed-input flex items-center justify-center text-themed-muted hover:text-themed-accent-solid transition-colors"
+              >
+                <svg className="w-2 h-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+            {activity.linkedActivityIds && activity.linkedActivityIds.length > 0 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onNavigate(activity.linkedActivityIds![activity.linkedActivityIds!.length - 1]); }}
+                className="w-4 h-4 rounded-full bg-themed-input flex items-center justify-center text-themed-muted hover:text-themed-accent-solid transition-colors"
+              >
+                <svg className="w-2 h-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
             <button
-              onClick={(e) => { e.stopPropagation(); onNavigate(activity.linkedFromId!); }}
-              className="w-4 h-4 rounded-full bg-themed-input flex items-center justify-center text-themed-muted hover:text-themed-accent-solid transition-colors flex-shrink-0"
+              onClick={(e) => { e.stopPropagation(); onCreateLinked(); }}
+              className="w-4 h-4 rounded-full bg-themed-input flex items-center justify-center text-themed-faint hover:text-themed-accent-solid transition-colors"
             >
               <svg className="w-2 h-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </button>
-          )}
-          {activity.linkedActivityIds && activity.linkedActivityIds.length > 0 && (
-            <button
-              onClick={(e) => { e.stopPropagation(); onNavigate(activity.linkedActivityIds![activity.linkedActivityIds!.length - 1]); }}
-              className="w-4 h-4 rounded-full bg-themed-input flex items-center justify-center text-themed-muted hover:text-themed-accent-solid transition-colors flex-shrink-0"
-            >
-              <svg className="w-2 h-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          )}
-          <span className="text-sm">{def?.emoji}</span>
-          {chainAvg !== null && <span className="text-sm">{moodEmoji(chainAvg)}</span>}
-          <span className="text-themed-faint text-xs">{formatTime(activity.startedAt, lang)}</span>
-          {actualTime && <span className="text-themed-faint text-xs">{actualTime}</span>}
+          </div>
         </div>
 
-        {/* Comments with per-comment mood scale */}
+        {/* Comment rows: time left, mood scale right */}
         {lastTwo.map((c) => (
-          <div key={`${c.id}-${c.rating || 0}`} className="mt-0.5">
-            <div className="flex items-center gap-1.5 text-sm">
+          <div key={`${c.id}-${c.rating || 0}`} className="flex items-center justify-between mt-0.5">
+            <div className="flex items-center gap-1.5 text-sm min-w-0">
               <span className="text-themed-faint text-xs flex-shrink-0">{formatTime(c.updatedAt || c.createdAt, lang)}</span>
               {c.text && <span className="text-themed-muted italic truncate">"{c.text}"</span>}
             </div>
             {c.rating && (
-              <div className="flex gap-px mt-0.5" style={{ fontSize: '0.55rem' }}>
+              <div className="flex gap-px flex-shrink-0 ml-1" style={{ fontSize: '0.55rem' }}>
                 {[
                   { v: 1, e: '😰' }, { v: 2, e: '😞' }, { v: 3, e: '😐' },
                   { v: 4, e: '🙂' }, { v: 5, e: '😄' }, { v: 6, e: '🤩' },
