@@ -118,9 +118,28 @@ function importPraFile(file: PraFile, currentLang: string): void {
     const settings = loadSettings();
     saveSettings({ ...settings, name: file.name });
   }
-  // History (backup only)
+  // History (backup only) - merge with existing, don't overwrite
   if (file.type === 'backup' && file.history) {
-    saveAllData(file.history);
+    const existing = loadAllData();
+    const existingMap = new Map(existing.map(d => [d.date, d]));
+
+    // Merge imported days with existing
+    file.history.forEach((importDay) => {
+      const existingDay = existingMap.get(importDay.date);
+      if (existingDay) {
+        // Add activities that don't already exist (by id)
+        const existingIds = new Set(existingDay.activities.map(a => a.id));
+        const newActivities = importDay.activities.filter(a => !existingIds.has(a.id));
+        existingDay.activities.push(...newActivities);
+        existingMap.set(importDay.date, existingDay);
+      } else {
+        existingMap.set(importDay.date, importDay);
+      }
+    });
+
+    // Sort by date descending and save
+    const merged = Array.from(existingMap.values()).sort((a, b) => b.date.localeCompare(a.date));
+    saveAllData(merged);
   }
   // Notes
   if (file.type === 'backup' && file.notes) {
@@ -159,7 +178,7 @@ function generatePraFileContent(data: PraFile): string {
   lines.push(`// Language: ${data.language}, Theme: ${data.theme}`);
   if (data.type === 'backup' && data.history) {
     const total = data.history.reduce((s, d) => s + d.activities.length, 0);
-    lines.push(`// Activities: ${data.activities.length} types, ${total} records`);
+    lines.push(`// Activities: ${data.activities.length} types, ${data.history.length} days, ${total} records`);
   }
   lines.push('');
   lines.push(JSON.stringify(data, null, 2));
