@@ -24,6 +24,12 @@ function getActivityComments(activity: Activity): ActivityComment[] {
   return comments;
 }
 
+function toLocalDatetime(isoStr: string): string {
+  const d = new Date(isoStr);
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 function formatCommentTime(isoStr: string, lang: string): string {
   return new Date(isoStr).toLocaleTimeString(lang === 'cs' ? 'cs-CZ' : 'en-US', { hour: '2-digit', minute: '2-digit' });
 }
@@ -106,7 +112,7 @@ export default function ActivityFlow({ activity, onClose, onEdit, existingActivi
 
   const [rating, setRating] = useState<Rating | null>(existingActivity?.rating || null);
 
-  const [startedAt] = useState(existingActivity?.startedAt || new Date().toISOString());
+  const [startedAt, setStartedAt] = useState(existingActivity?.startedAt || new Date().toISOString());
   const actualDurationRef = useRef<number>(existingActivity?.actualDurationSeconds || 0);
   // Track the saved activity ID for new records
   const savedIdRef = useRef<string | null>(existingActivity?.id || null);
@@ -202,20 +208,22 @@ export default function ActivityFlow({ activity, onClose, onEdit, existingActivi
     if (isEditing && existingActivity && onUpdateExisting) {
       if (isTimed) {
         onUpdateExisting(existingActivity.id, {
+          startedAt,
           selectedVariant: selectedVariant || undefined,
           ratingBefore: ratingBefore || undefined,
           ratingAfter: ratingAfter || undefined,
         });
       } else {
         onUpdateExisting(existingActivity.id, {
+          startedAt,
           selectedVariant: selectedVariant || undefined,
           rating: rating || undefined,
         });
       }
     } else if (savedIdRef.current) {
-      // Update existing new record with latest rating/variant
       if (isTimed) {
         updateActivityById(savedIdRef.current, {
+          startedAt,
           selectedVariant: selectedVariant || undefined,
           ratingBefore: ratingBefore || undefined,
           ratingAfter: ratingAfter || undefined,
@@ -223,13 +231,14 @@ export default function ActivityFlow({ activity, onClose, onEdit, existingActivi
         });
       } else {
         updateActivityById(savedIdRef.current, {
+          startedAt,
           selectedVariant: selectedVariant || undefined,
           rating: rating || undefined,
         });
       }
     }
     onClose();
-  }, [isEditing, existingActivity, onUpdateExisting, isTimed, selectedVariant, ratingBefore, ratingAfter, rating, activity, onClose, newComment, localComments, onAddComment, ensureSaved]);
+  }, [isEditing, existingActivity, onUpdateExisting, isTimed, selectedVariant, ratingBefore, ratingAfter, rating, activity, onClose, newComment, localComments, onAddComment, ensureSaved, startedAt]);
 
   const handleVariantClick = (variant: string) => {
     if (selectedVariant === variant) {
@@ -312,13 +321,16 @@ export default function ActivityFlow({ activity, onClose, onEdit, existingActivi
 
       <div className="flex-1 overflow-auto">
         <div className="max-w-md mx-auto p-4">
-          {isEditing && existingActivity && (
-            <div className="text-center text-xs text-themed-faint mb-2">
-              {new Date(existingActivity.startedAt).toLocaleDateString(language === 'cs' ? 'cs-CZ' : 'en-US', { weekday: 'short', day: 'numeric', month: 'short' })}
-              {' '}
-              {new Date(existingActivity.startedAt).toLocaleTimeString(language === 'cs' ? 'cs-CZ' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
-            </div>
-          )}
+          <div className="flex justify-center mb-2">
+            <input
+              type="datetime-local"
+              value={toLocalDatetime(startedAt)}
+              onChange={(e) => {
+                if (e.target.value) setStartedAt(new Date(e.target.value).toISOString());
+              }}
+              className="text-center text-xs text-themed-faint bg-transparent border-none focus:outline-none focus:text-themed-muted cursor-pointer"
+            />
+          </div>
           {/* Nečasové aktivity */}
           {!isTimed && (
             <div className="space-y-6 py-6">

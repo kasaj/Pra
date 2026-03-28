@@ -21,6 +21,7 @@ export interface ActivityComment {
   text: string;
   createdAt: string;
   updatedAt?: string;
+  rating?: Rating;
 }
 
 export interface Activity {
