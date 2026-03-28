@@ -7,6 +7,24 @@ import Timer from './Timer';
 
 type TimedFlowStep = 'rating-before' | 'timer' | 'rating-after';
 
+/** Get all comments from an activity (including legacy note fields) */
+function getActivityComments(activity: Activity): ActivityComment[] {
+  if (activity.comments && activity.comments.length > 0) return activity.comments;
+  const comments: ActivityComment[] = [];
+  const isTimed = activity.durationMinutes !== null;
+  if (isTimed) {
+    if (activity.noteBefore) {
+      comments.push({ id: 'legacy-before', text: activity.noteBefore, createdAt: activity.startedAt });
+    }
+    if (activity.noteAfter && activity.noteAfter !== activity.noteBefore) {
+      comments.push({ id: 'legacy-after', text: activity.noteAfter, createdAt: activity.completedAt });
+    }
+  } else if (activity.note) {
+    comments.push({ id: 'legacy-note', text: activity.note, createdAt: activity.completedAt });
+  }
+  return comments;
+}
+
 function formatCommentTime(isoStr: string, lang: string): string {
   return new Date(isoStr).toLocaleTimeString(lang === 'cs' ? 'cs-CZ' : 'en-US', { hour: '2-digit', minute: '2-digit' });
 }
@@ -197,14 +215,30 @@ export default function ActivityFlow({ activity, onClose, onEdit, existingActivi
     onClose();
   };
 
+  const [localComments, setLocalComments] = useState<ActivityComment[]>(
+    () => existingActivity ? getActivityComments(existingActivity) : []
+  );
+
   const handleAddNewComment = () => {
     if (!newComment.trim() || !onAddComment) return;
+    const comment: ActivityComment = {
+      id: `c-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+      text: newComment.trim(),
+      createdAt: new Date().toISOString(),
+    };
+    setLocalComments((prev) => [comment, ...prev]);
     onAddComment(newComment.trim());
     setNewComment('');
   };
 
-  // Get existing comments for display in edit mode
-  const existingComments: ActivityComment[] = existingActivity?.comments || [];
+  const handleLocalUpdateComment = (commentId: string, text: string) => {
+    setLocalComments((prev) => prev.map((c) =>
+      c.id === commentId ? { ...c, text, updatedAt: new Date().toISOString() } : c
+    ));
+    if (onUpdateComment) onUpdateComment(commentId, text);
+  };
+
+  const existingComments = localComments;
 
   return (
     <div className="fixed inset-0 bg-themed-base z-50 flex flex-col">
@@ -284,30 +318,36 @@ export default function ActivityFlow({ activity, onClose, onEdit, existingActivi
                   <StarRating value={rating} onChange={setRating} size="lg" />
                 </div>
 
-                {isEditing && activity.description && onAddComment && (
-                  <CommentsBlock
-                    comments={existingComments}
-                    newComment={newComment}
-                    setNewComment={setNewComment}
-                    onAdd={handleAddNewComment}
-                    onUpdate={onUpdateComment}
-                    lang={language}
-                    t={t}
-                  />
+                {isEditing && onAddComment ? (
+                  <>
+                    <CommentsBlock
+                      comments={existingComments}
+                      newComment={newComment}
+                      setNewComment={setNewComment}
+                      onAdd={handleAddNewComment}
+                      onUpdate={handleLocalUpdateComment}
+                      lang={language}
+                      t={t}
+                    />
+                    <button onClick={handleUntimedSubmit} className="btn-primary w-full">
+                      {t.flow.record}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <textarea
+                      value={note}
+                      onChange={(e) => setNote(e.target.value)}
+                      placeholder={t.flow.notePlaceholder}
+                      className="w-full p-4 rounded-xl bg-themed-input border border-themed
+                               focus:outline-none focus:border-themed-accent resize-none h-20
+                               text-themed-primary placeholder:text-themed-faint"
+                    />
+                    <button onClick={handleUntimedSubmit} className="btn-primary w-full">
+                      {t.flow.record}
+                    </button>
+                  </>
                 )}
-
-                <textarea
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  placeholder={t.flow.notePlaceholder}
-                  className="w-full p-4 rounded-xl bg-themed-input border border-themed
-                           focus:outline-none focus:border-themed-accent resize-none h-20
-                           text-themed-primary placeholder:text-themed-faint"
-                />
-
-                <button onClick={handleUntimedSubmit} className="btn-primary w-full">
-                  {t.flow.record}
-                </button>
               </div>
             </div>
           )}
@@ -411,30 +451,36 @@ export default function ActivityFlow({ activity, onClose, onEdit, existingActivi
                 <StarRating value={ratingAfter} onChange={setRatingAfter} size="lg" />
               </div>
 
-              {isEditing && activity.description && onAddComment && (
-                <CommentsBlock
-                  comments={existingComments}
-                  newComment={newComment}
-                  setNewComment={setNewComment}
-                  onAdd={handleAddNewComment}
-                  onUpdate={onUpdateComment}
-                  lang={language}
-                  t={t}
-                />
+              {isEditing && onAddComment ? (
+                <>
+                  <CommentsBlock
+                    comments={existingComments}
+                    newComment={newComment}
+                    setNewComment={setNewComment}
+                    onAdd={handleAddNewComment}
+                    onUpdate={handleLocalUpdateComment}
+                    lang={language}
+                    t={t}
+                  />
+                  <button onClick={handleTimedAfterSubmit} className="btn-primary w-full">
+                    {t.flow.record}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <textarea
+                    value={noteAfter}
+                    onChange={(e) => setNoteAfter(e.target.value)}
+                    placeholder={t.flow.notePlaceholder}
+                    className="w-full p-4 rounded-xl bg-themed-input border border-themed
+                             focus:outline-none focus:border-themed-accent resize-none h-20
+                             text-themed-primary placeholder:text-themed-faint"
+                  />
+                  <button onClick={handleTimedAfterSubmit} className="btn-primary w-full">
+                    {t.flow.finish}
+                  </button>
+                </>
               )}
-
-              <textarea
-                value={noteAfter}
-                onChange={(e) => setNoteAfter(e.target.value)}
-                placeholder={t.flow.notePlaceholder}
-                className="w-full p-4 rounded-xl bg-themed-input border border-themed
-                         focus:outline-none focus:border-themed-accent resize-none h-20
-                         text-themed-primary placeholder:text-themed-faint"
-              />
-
-              <button onClick={handleTimedAfterSubmit} className="btn-primary w-full">
-                {isEditing ? t.flow.record : t.flow.finish}
-              </button>
             </div>
           )}
 
