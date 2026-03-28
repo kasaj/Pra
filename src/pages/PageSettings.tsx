@@ -29,7 +29,7 @@ interface PraFile {
   notes?: { cs: Record<string, string>; en: Record<string, string> };
   userModified?: string[];
   sessionStart?: string;
-  activityStats?: Record<string, { count: number; totalSeconds: number }>;
+  activityStats?: Record<string, { count: number; totalSeconds: number; avgRating?: number }>;
 }
 
 function generateBackup(lang: string, currentTheme: string, profileName: string): PraFile {
@@ -52,13 +52,25 @@ function generateBackup(lang: string, currentTheme: string, profileName: string)
   try { const s = localStorage.getItem('pra_user_modified_activities'); if (s) userModified = JSON.parse(s); } catch {}
 
   // Compute per-activity stats from history
-  const activityStats: Record<string, { count: number; totalSeconds: number }> = {};
+  const activityStats: Record<string, { count: number; totalSeconds: number; avgRating?: number }> = {};
+  const ratingAccum: Record<string, { sum: number; count: number }> = {};
   history.forEach((day) => {
     day.activities.forEach((a) => {
       if (!activityStats[a.type]) activityStats[a.type] = { count: 0, totalSeconds: 0 };
       activityStats[a.type].count++;
       activityStats[a.type].totalSeconds += a.actualDurationSeconds || (a.durationMinutes ? a.durationMinutes * 60 : 60);
+      const r = a.ratingAfter || a.rating;
+      if (r) {
+        if (!ratingAccum[a.type]) ratingAccum[a.type] = { sum: 0, count: 0 };
+        ratingAccum[a.type].sum += r;
+        ratingAccum[a.type].count++;
+      }
     });
+  });
+  Object.entries(ratingAccum).forEach(([type, { sum, count }]) => {
+    if (activityStats[type]) {
+      activityStats[type].avgRating = Math.round((sum / count) * 10) / 10;
+    }
   });
 
   return {
