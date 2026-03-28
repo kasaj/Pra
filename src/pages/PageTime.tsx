@@ -8,8 +8,6 @@ import ActivityFlow from '../components/ActivityFlow';
 import {
   LineChart,
   Line,
-  AreaChart,
-  Area,
   ComposedChart,
   Bar,
   XAxis,
@@ -338,7 +336,7 @@ export default function PageTime() {
   const { t, language } = useLanguage();
   const [data, setData] = useState(() => loadAllData());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [trendRange, setTrendRange] = useState<'day' | 'week' | 'month'>('week');
+  const [trendRange, setTrendRange] = useState<'day' | 'week' | 'month'>('day');
   const [editingRecord, setEditingRecord] = useState<Activity | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
@@ -632,152 +630,57 @@ export default function PageTime() {
           </div>
         </div>
         <div className="card">
-          {trendRange === 'day' ? (
-            /* Day view: bars for count, line for rating */
-            <>
-              <ResponsiveContainer width="100%" height={160}>
-                <ComposedChart data={trendData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
-                  <XAxis
-                    dataKey="day"
-                    tick={{ fontSize: 9, fill: colors.tick }}
-                    axisLine={false}
-                    tickLine={false}
-                    interval={1}
-                  />
-                  <YAxis yAxisId="count" hide />
-                  <YAxis yAxisId="rating" domain={[0, 5]} hide />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: colors.tooltipBg,
-                      border: `1px solid ${colors.tooltipBorder}`,
-                      borderRadius: '8px',
-                      fontSize: '12px',
-                    }}
-                    formatter={(value: number, name: string) => {
-                      if (name === 'avgRating') return [value || '-', t.time.rating];
-                      return [value, language === 'cs' ? 'Počet' : 'Count'];
-                    }}
-                  />
-                  <Bar
-                    yAxisId="count"
-                    dataKey="count"
-                    fill={colors.barEmpty}
-                    opacity={0.5}
-                    radius={[3, 3, 0, 0]}
-                  />
-                  <Line
-                    yAxisId="rating"
-                    type="monotone"
-                    dataKey="avgRating"
-                    stroke={colors.barHigh}
-                    strokeWidth={2}
-                    dot={{ r: 3, fill: colors.barHigh }}
-                    connectNulls={false}
-                  />
-                </ComposedChart>
-              </ResponsiveContainer>
-              <div className="flex justify-center gap-4 mt-2 text-xs text-themed-faint">
-                <span className="flex items-center gap-1">
-                  <span className="w-3 h-3 rounded-sm opacity-50" style={{ backgroundColor: colors.barEmpty }} />
-                  {language === 'cs' ? 'Počet' : 'Count'}
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="w-4 h-0.5 rounded" style={{ backgroundColor: colors.barHigh }} />
-                  {t.time.rating}
-                </span>
-              </div>
-            </>
-          ) : (
-            /* Week/Month view: area chart with count, time, rating */
-            <>
-              <ResponsiveContainer width="100%" height={trendRange === 'month' ? 180 : 150}>
-                <AreaChart data={trendData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="gradCount" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={colors.barEmpty} stopOpacity={0.4} />
-                      <stop offset="95%" stopColor={colors.barEmpty} stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="gradRating" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={colors.barHigh} stopOpacity={0.4} />
-                      <stop offset="95%" stopColor={colors.barHigh} stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="gradMinutes" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={colors.before} stopOpacity={0.3} />
-                      <stop offset="95%" stopColor={colors.before} stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis
-                    dataKey="day"
-                    tick={{ fontSize: trendRange === 'month' ? 9 : 11, fill: colors.tick }}
-                    axisLine={false}
-                    tickLine={false}
-                    interval={trendRange === 'month' ? 4 : 0}
-                  />
-                  <YAxis yAxisId="rating" domain={[0, 5]} hide />
-                  <YAxis yAxisId="count" hide />
-                  <YAxis yAxisId="minutes" hide />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: colors.tooltipBg,
-                      border: `1px solid ${colors.tooltipBorder}`,
-                      borderRadius: '8px',
-                      fontSize: '12px',
-                    }}
-                    formatter={(value: number, name: string) => {
-                      if (name === 'avgRating') return [value || '-', t.time.rating];
-                      if (name === 'minutes') {
-                        const h = Math.floor(value / 60);
-                        const m = value % 60;
-                        return [h > 0 ? `${h}h ${m}m` : `${m} min`, language === 'cs' ? 'Čas' : 'Time'];
-                      }
-                      return [value, language === 'cs' ? 'Počet' : 'Count'];
-                    }}
-                  />
-                  <Area
-                    yAxisId="minutes"
-                    type="monotone"
-                    dataKey="minutes"
-                    stroke={colors.before}
-                    fill="url(#gradMinutes)"
-                    strokeWidth={1.5}
-                    dot={false}
-                  />
-                  <Area
-                    yAxisId="count"
-                    type="monotone"
-                    dataKey="count"
-                    stroke={colors.barEmpty}
-                    fill="url(#gradCount)"
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                  <Area
-                    yAxisId="rating"
-                    type="monotone"
-                    dataKey="avgRating"
-                    stroke={colors.barHigh}
-                    fill="url(#gradRating)"
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-              <div className="flex justify-center gap-4 mt-2 text-xs text-themed-faint">
-                <span className="flex items-center gap-1">
-                  <span className="w-4 h-0.5 rounded" style={{ backgroundColor: colors.barEmpty }} />
-                  {language === 'cs' ? 'Počet' : 'Count'}
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="w-4 h-0.5 rounded" style={{ backgroundColor: colors.before }} />
-                  {language === 'cs' ? 'Čas' : 'Time'}
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="w-4 h-0.5 rounded" style={{ backgroundColor: colors.barHigh }} />
-                  {t.time.rating}
-                </span>
-              </div>
-            </>
-          )}
+          <ResponsiveContainer width="100%" height={trendRange === 'month' ? 180 : 160}>
+            <ComposedChart data={trendData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+              <XAxis
+                dataKey="day"
+                tick={{ fontSize: trendRange === 'month' ? 9 : trendRange === 'day' ? 9 : 11, fill: colors.tick }}
+                axisLine={false}
+                tickLine={false}
+                interval={trendRange === 'month' ? 4 : trendRange === 'day' ? 1 : 0}
+              />
+              <YAxis yAxisId="count" hide />
+              <YAxis yAxisId="rating" domain={[0, 5]} hide />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: colors.tooltipBg,
+                  border: `1px solid ${colors.tooltipBorder}`,
+                  borderRadius: '8px',
+                  fontSize: '12px',
+                }}
+                formatter={(value: number, name: string) => {
+                  if (name === 'avgRating') return [value || '-', t.time.rating];
+                  return [value, language === 'cs' ? 'Počet' : 'Count'];
+                }}
+              />
+              <Bar
+                yAxisId="count"
+                dataKey="count"
+                fill={colors.barEmpty}
+                opacity={0.5}
+                radius={[3, 3, 0, 0]}
+              />
+              <Line
+                yAxisId="rating"
+                type="monotone"
+                dataKey="avgRating"
+                stroke={colors.barHigh}
+                strokeWidth={2}
+                dot={{ r: 3, fill: colors.barHigh }}
+                connectNulls={false}
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+          <div className="flex justify-center gap-4 mt-2 text-xs text-themed-faint">
+            <span className="flex items-center gap-1">
+              <span className="w-3 h-3 rounded-sm opacity-50" style={{ backgroundColor: colors.barEmpty }} />
+              {language === 'cs' ? 'Počet' : 'Count'}
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-4 h-0.5 rounded" style={{ backgroundColor: colors.barHigh }} />
+              {t.time.rating}
+            </span>
+          </div>
         </div>
       </section>
 
