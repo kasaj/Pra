@@ -175,13 +175,13 @@ export default function PageInfo() {
           </section>
         )}
 
-        <footer className="text-center text-sm text-themed-faint pt-4 space-y-3">
-          <div>
-            <img src={logoImg} alt="PRA" className="w-12 h-12 mx-auto opacity-60" />
-          </div>
+        <footer className="text-center text-sm text-themed-faint pt-4 space-y-4">
           <div className="space-y-1">
             <div><a href="https://github.com/kasaj/app" target="_blank" rel="noopener noreferrer" className="text-themed-accent-solid hover:underline">github.com/kasaj/app</a></div>
             <div><a href="https://community.paulus.yoga/c/sdileni/aplikace-pro-praxi-beta" target="_blank" rel="noopener noreferrer" className="text-themed-accent-solid hover:underline">community.paulus.yoga</a></div>
+          </div>
+          <div>
+            <img src={logoImg} alt="PRA" className="w-20 h-20 mx-auto opacity-50" />
           </div>
         </footer>
       </div>
