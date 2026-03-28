@@ -276,6 +276,7 @@ export default function ActivityFlow({ activity, onClose, onEdit, existingActivi
               onComplete={handleTimerComplete}
               onCancel={onClose}
               note={noteBefore}
+              startedAt={startedAt}
             />
           )}
 

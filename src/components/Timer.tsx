@@ -29,9 +29,10 @@ interface TimerProps {
   onComplete: (elapsedSeconds: number) => void;
   onCancel: () => void;
   note?: string;
+  startedAt?: string;
 }
 
-export default function Timer({ durationMinutes, onComplete, onCancel, note }: TimerProps) {
+export default function Timer({ durationMinutes, onComplete, onCancel, note, startedAt }: TimerProps) {
   const { t } = useLanguage();
   const totalSeconds = durationMinutes * 60;
   const [secondsLeft, setSecondsLeft] = useState(totalSeconds);
@@ -103,6 +104,12 @@ export default function Timer({ durationMinutes, onComplete, onCancel, note }: T
 
   return (
     <div className="flex flex-col items-center py-8">
+      {startedAt && (
+        <div className="text-sm text-themed-faint mb-2">
+          {new Date(startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </div>
+      )}
+
       {note && (
         <p className="text-center text-themed-muted leading-relaxed mb-6 px-4 italic">
           {note}
