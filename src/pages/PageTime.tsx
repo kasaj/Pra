@@ -457,7 +457,7 @@ export default function PageTime() {
                     const m = value % 60;
                     return [h > 0 ? `${h}h ${m}m` : `${m} min`, language === 'cs' ? 'Čas' : 'Time'];
                   }
-                  return [value, language === 'cs' ? 'Aktivit' : 'Activities'];
+                  return [value, language === 'cs' ? 'Počet' : 'Count'];
                 }}
               />
               <Area
@@ -492,7 +492,7 @@ export default function PageTime() {
           <div className="flex justify-center gap-4 mt-2 text-xs text-themed-faint">
             <span className="flex items-center gap-1">
               <span className="w-4 h-0.5 rounded" style={{ backgroundColor: colors.barEmpty }} />
-              {language === 'cs' ? 'Aktivit' : 'Activities'}
+              {language === 'cs' ? 'Počet' : 'Count'}
             </span>
             <span className="flex items-center gap-1">
               <span className="w-4 h-0.5 rounded" style={{ backgroundColor: colors.before }} />
