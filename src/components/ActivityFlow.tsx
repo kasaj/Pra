@@ -70,7 +70,7 @@ function CommentsBlock({ comments, newComment, setNewComment, newRating, setNewR
         </div>
       </div>
       {comments.map((comment) => (
-        <div key={comment.id} className="space-y-1">
+        <div key={`${comment.id}-${comment.rating || 0}`} className="space-y-1">
           <div className="flex items-center gap-2">
             <input
               type="time"
