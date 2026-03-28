@@ -3,8 +3,9 @@ import { loadAllData, deleteActivitiesByIds, updateActivityById, findActivityByI
 import { getChartColors } from '../utils/theme';
 import { getActivityByType, getTranslatedActivity } from '../utils/activities';
 import { useLanguage } from '../i18n';
-import { Activity, ActivityComment, DayEntry } from '../types';
+import { Activity, ActivityComment, DayEntry, Rating } from '../types';
 import ActivityFlow from '../components/ActivityFlow';
+import StarRating from '../components/StarRating';
 import {
   LineChart,
   Line,
@@ -249,10 +250,11 @@ interface ActivityRowProps {
   onClickEdit: () => void;
   onCreateLinked: () => void;
   onNavigate: (id: string) => void;
+  onUpdateCommentRating: (commentId: string, rating: Rating) => void;
   t: ReturnType<typeof useLanguage>['t'];
 }
 
-function ActivityRow({ activity, lang, selected, onToggleSelect, onClickEdit, onCreateLinked, onNavigate, t }: ActivityRowProps) {
+function ActivityRow({ activity, lang, selected, onToggleSelect, onClickEdit, onCreateLinked, onNavigate, onUpdateCommentRating, t }: ActivityRowProps) {
   const rawDef = getActivityByType(activity.type);
   const def = rawDef ? getTranslatedActivity(rawDef, t) : rawDef;
   const isTimed = activity.durationMinutes !== null;
@@ -319,12 +321,20 @@ function ActivityRow({ activity, lang, selected, onToggleSelect, onClickEdit, on
         {lastTwo.length > 0 && (
           <div className="mt-1 ml-12 space-y-0.5">
             {lastTwo.map((c) => (
-              <div key={c.id} className="flex items-baseline gap-2 text-sm">
-                <span className="text-themed-faint text-xs flex-shrink-0">
-                  {formatTime(c.updatedAt || c.createdAt, lang)}
-                </span>
-                {c.rating && <span className="text-xs flex-shrink-0">{moodEmoji(c.rating)}</span>}
-                <span className="text-themed-muted italic truncate">"{c.text}"</span>
+              <div key={`${c.id}-${c.rating || 0}`} className="space-y-1">
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-themed-faint text-xs flex-shrink-0">
+                    {formatTime(c.updatedAt || c.createdAt, lang)}
+                  </span>
+                  <StarRating
+                    value={c.rating || null}
+                    onChange={(r) => onUpdateCommentRating(c.id, r)}
+                    size="xs"
+                  />
+                </div>
+                {c.text && (
+                  <div className="text-sm text-themed-muted italic truncate">"{c.text}"</div>
+                )}
               </div>
             ))}
           </div>
@@ -574,6 +584,17 @@ export default function PageTime() {
     if (idx < allActivitiesFlat.length - 1) setEditingRecord(allActivitiesFlat[idx + 1]);
   }, [editingRecord, allActivitiesFlat]);
 
+  const handleRowCommentRating = useCallback((activityId: string, commentId: string, rating: Rating) => {
+    const found = findActivityById(activityId);
+    if (!found) return;
+    const comments = found.activity.comments || getActivityComments(found.activity);
+    const updated = comments.map((c) =>
+      c.id === commentId ? { ...c, rating, updatedAt: new Date().toISOString() } : c
+    );
+    updateActivityById(activityId, { comments: updated });
+    setData(loadAllData());
+  }, []);
+
   const handleAddComment = useCallback((activityId: string, text: string) => {
     const found = findActivityById(activityId);
     if (!found) return;
@@ -805,6 +826,7 @@ export default function PageTime() {
                     onClickEdit={() => setEditingRecord(activity)}
                     onCreateLinked={() => handleCreateLinked(activity)}
                     onNavigate={handleNavigate}
+                    onUpdateCommentRating={(cId, r) => handleRowCommentRating(activity.id, cId, r)}
                     t={t}
                   />
                 ))}

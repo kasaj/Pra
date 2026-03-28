@@ -31,7 +31,7 @@ export default function StarRating({ value, onChange, size = 'md' }: StarRatingP
           type="button"
           onClick={() => onChange(v)}
           className={`transition-transform hover:scale-110 ${
-            value && v <= value ? 'opacity-100' : 'opacity-30'
+            value === v ? 'opacity-100' : 'grayscale opacity-40'
           }`}
         >
           {emoji}
