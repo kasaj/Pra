@@ -55,28 +55,6 @@ function getChainAvgRating(activity: Activity, allData: DayEntry[]): number | nu
   return Math.round((ratings.reduce((s, r) => s + r, 0) / ratings.length) * 10) / 10;
 }
 
-const MOOD_SCALE_ITEMS = [
-  { value: 1, emoji: '😰' },
-  { value: 2, emoji: '😞' },
-  { value: 3, emoji: '😐' },
-  { value: 4, emoji: '🙂' },
-  { value: 5, emoji: '😄' },
-  { value: 6, emoji: '🤩' },
-];
-
-function MoodScale({ value }: { value: number }) {
-  const rounded = Math.round(Math.min(6, Math.max(1, value)));
-  return (
-    <div className="flex gap-0.5 text-xs">
-      {MOOD_SCALE_ITEMS.map(({ value: v, emoji }) => (
-        <span key={v} className={v === rounded ? 'opacity-100' : 'grayscale opacity-30'}>
-          {emoji}
-        </span>
-      ))}
-    </div>
-  );
-}
-
 function ActivityCalendar({ data, language, onDayClick }: {
   data: DayEntry[];
   language: string;
@@ -387,13 +365,6 @@ function ActivityRow({ activity, allData, lang, selected, onToggleSelect, onClic
           </div>
         )}
 
-        {/* Chain average mood as scale */}
-        {chainAvg !== null && lastTwo.length > 0 && (
-          <div className="mt-1.5 ml-12 flex items-center gap-2">
-            <MoodScale value={chainAvg} />
-            <span className="text-xs text-themed-faint">{chainAvg}</span>
-          </div>
-        )}
 
         {/* Navigation links and + button */}
         <div className="mt-1 ml-12 flex items-center gap-1.5">
@@ -470,12 +441,31 @@ export default function PageTime() {
       });
     });
 
+    // Overall average mood from all comments
+    const allMoodRatings: number[] = [];
+    data.forEach((day) => {
+      day.activities.forEach((a) => {
+        const comments = getActivityComments(a);
+        const commentRatings = comments.filter(c => c.rating).map(c => c.rating!);
+        if (commentRatings.length > 0) {
+          allMoodRatings.push(...commentRatings);
+        } else {
+          const r = a.ratingAfter || a.rating;
+          if (r) allMoodRatings.push(r);
+        }
+      });
+    });
+    const overallMood = allMoodRatings.length > 0
+      ? Math.round((allMoodRatings.reduce((s, r) => s + r, 0) / allMoodRatings.length) * 10) / 10
+      : 3; // default 😐
+
     const toHM = (s: number) => ({ hours: Math.floor(s / 3600), minutes: Math.floor((s % 3600) / 60) });
     const firstDate = data.length > 0 ? data[data.length - 1].date : null;
 
     return {
       totalActivities, totalSeconds, ...toHM(totalSeconds),
       todayActivities, today: toHM(todaySeconds),
+      overallMood,
       firstDate,
     };
   }, [data]);
@@ -911,6 +901,18 @@ export default function PageTime() {
       {/* Running stats */}
       <section className="mb-6">
         <h2 className="font-serif text-base text-themed-secondary mb-3">{t.time.runningTitle}</h2>
+        <div className="card flex justify-center py-4 mb-3">
+          <div className="flex gap-1.5 text-2xl">
+            {[
+              { v: 1, e: '😰' }, { v: 2, e: '😞' }, { v: 3, e: '😐' },
+              { v: 4, e: '🙂' }, { v: 5, e: '😄' }, { v: 6, e: '🤩' },
+            ].map(({ v, e }) => (
+              <span key={v} className={v === Math.round(summaryStats.overallMood) ? 'opacity-100' : 'grayscale opacity-30'}>
+                {e}
+              </span>
+            ))}
+          </div>
+        </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="card text-center py-3">
             <div className="text-2xl font-serif text-themed-accent-solid">
