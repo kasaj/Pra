@@ -57,7 +57,7 @@ function CommentsBlock({ comments, newComment, setNewComment, newRating, setNewR
             placeholder={t.time.commentPlaceholder}
             className="flex-1 p-3 rounded-xl bg-themed-input border border-themed
                      focus:outline-none focus:border-themed-accent resize-none h-14
-                     text-themed-primary placeholder:text-themed-faint text-sm"
+                     text-themed-primary placeholder:text-themed-faint text-base"
             onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); onAdd(); } }}
           />
           <button
@@ -111,7 +111,7 @@ function CommentsBlock({ comments, newComment, setNewComment, newRating, setNewR
             }}
             className="w-full p-3 rounded-xl bg-themed-input border border-themed
                      focus:outline-none focus:border-themed-accent resize-none h-16
-                     text-themed-primary text-sm"
+                     text-themed-primary text-base"
           />
         </div>
       ))}

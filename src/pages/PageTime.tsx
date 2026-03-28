@@ -3,9 +3,8 @@ import { loadAllData, deleteActivitiesByIds, updateActivityById, findActivityByI
 import { getChartColors } from '../utils/theme';
 import { getActivityByType, getTranslatedActivity } from '../utils/activities';
 import { useLanguage } from '../i18n';
-import { Activity, ActivityComment, DayEntry, Rating } from '../types';
+import { Activity, ActivityComment, DayEntry } from '../types';
 import ActivityFlow from '../components/ActivityFlow';
-import StarRating from '../components/StarRating';
 import {
   LineChart,
   Line,
@@ -284,11 +283,10 @@ interface ActivityRowProps {
   onClickEdit: () => void;
   onCreateLinked: () => void;
   onNavigate: (id: string) => void;
-  onUpdateCommentRating: (commentId: string, rating: Rating) => void;
   t: ReturnType<typeof useLanguage>['t'];
 }
 
-function ActivityRow({ activity, allData, lang, selected, onToggleSelect, onClickEdit, onCreateLinked, onNavigate, onUpdateCommentRating, t }: ActivityRowProps) {
+function ActivityRow({ activity, allData, lang, selected, onToggleSelect, onClickEdit, onCreateLinked, onNavigate, t }: ActivityRowProps) {
   const rawDef = getActivityByType(activity.type);
   const def = rawDef ? getTranslatedActivity(rawDef, t) : rawDef;
   const actualTime = activity.actualDurationSeconds
@@ -342,23 +340,20 @@ function ActivityRow({ activity, allData, lang, selected, onToggleSelect, onClic
           )}
         </div>
 
-        {/* Last two comments */}
+        {/* Last two comments with mood+name prefix on first */}
         {lastTwo.length > 0 && (
           <div className="mt-1 ml-12 space-y-0.5">
-            {lastTwo.map((c) => (
-              <div key={`${c.id}-${c.rating || 0}`} className="space-y-1">
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-themed-faint text-xs flex-shrink-0">
-                    {formatTime(c.updatedAt || c.createdAt, lang)}
-                  </span>
-                  <StarRating
-                    value={c.rating || null}
-                    onChange={(r) => onUpdateCommentRating(c.id, r)}
-                    size="xs"
-                  />
-                </div>
+            {lastTwo.map((c, i) => (
+              <div key={`${c.id}-${c.rating || 0}`} className="flex items-baseline gap-2 text-sm">
+                {i === 0 && chainAvg !== null && (
+                  <span className="text-xs flex-shrink-0">{moodEmoji(chainAvg)}{def?.emoji}</span>
+                )}
+                <span className="text-themed-faint text-xs flex-shrink-0">
+                  {formatTime(c.updatedAt || c.createdAt, lang)}
+                </span>
+                {c.rating && <span className="text-xs flex-shrink-0">{moodEmoji(c.rating)}</span>}
                 {c.text && (
-                  <div className="text-sm text-themed-muted italic truncate">"{c.text}"</div>
+                  <span className="text-themed-muted italic truncate">"{c.text}"</span>
                 )}
               </div>
             ))}
@@ -637,16 +632,6 @@ export default function PageTime() {
     if (idx < allActivitiesFlat.length - 1) setEditingRecord(allActivitiesFlat[idx + 1]);
   }, [editingRecord, allActivitiesFlat]);
 
-  const handleRowCommentRating = useCallback((activityId: string, commentId: string, rating: Rating) => {
-    const found = findActivityById(activityId);
-    if (!found) return;
-    const comments = found.activity.comments || getActivityComments(found.activity);
-    const updated = comments.map((c) =>
-      c.id === commentId ? { ...c, rating, updatedAt: new Date().toISOString() } : c
-    );
-    updateActivityById(activityId, { comments: updated });
-    setData(loadAllData());
-  }, []);
 
   const handleAddComment = useCallback((activityId: string, text: string) => {
     const found = findActivityById(activityId);
@@ -880,7 +865,6 @@ export default function PageTime() {
                     onClickEdit={() => setEditingRecord(activity)}
                     onCreateLinked={() => handleCreateLinked(activity)}
                     onNavigate={handleNavigate}
-                    onUpdateCommentRating={(cId, r) => handleRowCommentRating(activity.id, cId, r)}
                     t={t}
                   />
                 ))}
