@@ -216,7 +216,7 @@ function ActivityCalendar({ data, language, onDayClick }: {
                       <span className="text-xs text-themed-faint w-10">{time}</span>
                       <span className="text-base">{def?.emoji}</span>
                       <span className="text-sm text-themed-primary truncate flex-1">{def?.name}</span>
-                      {actLinkCount > 0 && <span className="text-xs text-themed-faint">{actLinkCount}🔗</span>}
+                      {actLinkCount > 0 && <span className="text-xs text-themed-faint">{actLinkCount}</span>}
                       {actAvg !== null ? (
                         <span className="text-xs">{moodEmoji(actAvg)}</span>
                       ) : null}
@@ -327,10 +327,7 @@ function ActivityRow({ activity, allData, lang, selected, onToggleSelect, onClic
             {actualTime && <span className="text-themed-faint text-xs">{actualTime}</span>}
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm">{def?.emoji}</span>
-            {chainAvg !== null && <span className="text-sm">{moodEmoji(chainAvg)}</span>}
-            {linkCount > 0 && <span className="text-xs text-themed-faint">{linkCount}🔗</span>}
-            {/* Nav buttons */}
+            {linkCount > 0 && <span className="text-xs text-themed-faint">{linkCount}</span>}
             {activity.linkedFromId && (
               <button
                 onClick={(e) => { e.stopPropagation(); onNavigate(activity.linkedFromId!); }}
@@ -359,6 +356,8 @@ function ActivityRow({ activity, allData, lang, selected, onToggleSelect, onClic
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </button>
+            <span className="text-sm">{def?.emoji}</span>
+            {chainAvg !== null && <span className="text-sm">{moodEmoji(chainAvg)}</span>}
           </div>
         </div>
 
