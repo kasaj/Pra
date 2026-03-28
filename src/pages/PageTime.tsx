@@ -55,6 +55,28 @@ function getChainAvgRating(activity: Activity, allData: DayEntry[]): number | nu
   return Math.round((ratings.reduce((s, r) => s + r, 0) / ratings.length) * 10) / 10;
 }
 
+const MOOD_SCALE_ITEMS = [
+  { value: 1, emoji: '😰' },
+  { value: 2, emoji: '😞' },
+  { value: 3, emoji: '😐' },
+  { value: 4, emoji: '🙂' },
+  { value: 5, emoji: '😄' },
+  { value: 6, emoji: '🤩' },
+];
+
+function MoodScale({ value }: { value: number }) {
+  const rounded = Math.round(Math.min(6, Math.max(1, value)));
+  return (
+    <div className="flex gap-0.5 text-xs">
+      {MOOD_SCALE_ITEMS.map(({ value: v, emoji }) => (
+        <span key={v} className={v === rounded ? 'opacity-100' : 'grayscale opacity-30'}>
+          {emoji}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function ActivityCalendar({ data, language, onDayClick }: {
   data: DayEntry[];
   language: string;
@@ -365,10 +387,10 @@ function ActivityRow({ activity, allData, lang, selected, onToggleSelect, onClic
           </div>
         )}
 
-        {/* Chain average mood */}
+        {/* Chain average mood as scale */}
         {chainAvg !== null && lastTwo.length > 0 && (
-          <div className="mt-1 ml-12 flex items-center gap-1.5">
-            <span className="text-base">{moodEmoji(chainAvg)}</span>
+          <div className="mt-1.5 ml-12 flex items-center gap-2">
+            <MoodScale value={chainAvg} />
             <span className="text-xs text-themed-faint">{chainAvg}</span>
           </div>
         )}
@@ -486,8 +508,16 @@ export default function PageTime() {
       const ratings: number[] = [];
       activities.forEach((a) => {
         totalSecs += a.actualDurationSeconds || (a.durationMinutes ? a.durationMinutes * 60 : 60);
-        if (a.ratingAfter) ratings.push(a.ratingAfter);
-        else if (a.rating) ratings.push(a.rating);
+        // Comment-based ratings first
+        const comments = getActivityComments(a);
+        const commentRatings = comments.filter(c => c.rating).map(c => c.rating!);
+        if (commentRatings.length > 0) {
+          ratings.push(...commentRatings);
+        } else {
+          // Fallback to legacy
+          const r = a.ratingAfter || a.rating;
+          if (r) ratings.push(r);
+        }
       });
       const avgRating = ratings.length > 0
         ? Math.round((ratings.reduce((s, r) => s + r, 0) / ratings.length) * 10) / 10

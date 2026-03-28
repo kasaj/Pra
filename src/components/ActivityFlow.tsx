@@ -115,6 +115,25 @@ function CommentsBlock({ comments, newComment, setNewComment, newRating, setNewR
           />
         </div>
       ))}
+      {(() => {
+        const rated = comments.filter(c => c.rating).map(c => c.rating!);
+        if (rated.length === 0) return null;
+        const avg = Math.round((rated.reduce((s, r) => s + r, 0) / rated.length) * 10) / 10;
+        const rounded = Math.round(Math.min(6, Math.max(1, avg)));
+        return (
+          <div className="flex items-center gap-2 pt-1">
+            <div className="flex gap-0.5 text-xs">
+              {[
+                { v: 1, e: '😰' }, { v: 2, e: '😞' }, { v: 3, e: '😐' },
+                { v: 4, e: '🙂' }, { v: 5, e: '😄' }, { v: 6, e: '🤩' },
+              ].map(({ v, e }) => (
+                <span key={v} className={v === rounded ? 'opacity-100' : 'grayscale opacity-30'}>{e}</span>
+              ))}
+            </div>
+            <span className="text-xs text-themed-faint">{avg}</span>
+          </div>
+        );
+      })()}
     </div>
   );
 }
